@@ -33,7 +33,7 @@ class SiriProtocolHandler(Siri):
         self.pong = 0
         self.plugin_lastAceId = ""
         self.current_running_plugin = None
-        self.dbConnection = db.getConnection()
+        self.dbConnection = server.dbConnection
         self.assistant = None
         self.speech = dict()
         self.httpClient = AsyncOpenHttp(self.handle_google_data)
@@ -48,10 +48,6 @@ class SiriProtocolHandler(Siri):
         else:
             self.send_object(SpeechFailure(requestId, "No connection to Google possible"))
             self.send_object(RequestCompleted(requestId))
-        
-    def connectionLost(self, reason):
-        self.dbConnection.close()
-        Siri.connectionLost(self, reason)
         
     def received_ping(self, numOfPing):
         self.pong += 1
@@ -125,7 +121,7 @@ class SiriProtocolHandler(Siri):
                     return
         
         if ObjectIsCommand(plist, StartSpeechRequest) or ObjectIsCommand(plist, StartSpeechDictation):
-            self.logger.info("New start of speech received")
+            self.logger.debug("New start of speech received")
             startSpeech = None
             if ObjectIsCommand(plist, StartSpeechDictation):
                 dictation = True
@@ -160,7 +156,7 @@ class SiriProtocolHandler(Siri):
             self.speech[startSpeech.aceId] = (decoder if speexUsed else None, encoder, dictation)
         
         elif ObjectIsCommand(plist, SpeechPacket):
-            self.logger.info("Decoding speech packet")
+            self.logger.debug("Decoding speech packet")
             speechPacket = SpeechPacket(plist)
             (decoder, encoder, dictation) = self.speech[speechPacket.refId]
             if decoder:
@@ -173,7 +169,7 @@ class SiriProtocolHandler(Siri):
             self.process_recognized_speech({u'hypotheses': [{'confidence': 1.0, 'utterance': str.lower(plist['properties']['utterance'])}]}, plist['aceId'], False)
     
         elif ObjectIsCommand(plist, FinishSpeech):
-            self.logger.info("End of speech received")
+            self.logger.debug("End of speech received")
             finishSpeech = FinishSpeech(plist)
             (decoder, encoder, dictation) = self.speech[finishSpeech.refId]
             if decoder:
@@ -187,11 +183,12 @@ class SiriProtocolHandler(Siri):
             try:
                 self.current_google_request = self.httpClient.make_google_request(flacBin, finishSpeech.refId, dictation, language=self.assistant.language, allowCurses=True)
             except AttributeError, TypeError:
-                self.logger.info("Unable to find language record for this assistant. Try turning Siri off and then back on.")
+                self.logger.warning("Unable to find language record for this assistant. Try turning Siri off and then back on.")
                 
         elif ObjectIsCommand(plist, CancelRequest):
                 # this is probably called when we need to kill a plugin
                 # wait for thread to finish a send
+                self.logger.debug("Should cancel current request")
                 cancelRequest = CancelRequest(plist)
                 if cancelRequest.refId in self.speech:
                     del self.speech[cancelRequest.refId]

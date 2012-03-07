@@ -20,7 +20,7 @@ def setup():
 
 def getConnection():
     try:
-        return sqlite3.connect(__database__, detect_types=sqlite3.PARSE_DECLTYPES, timeout=10.0)
+        return sqlite3.connect(__database__, detect_types=sqlite3.PARSE_DECLTYPES, timeout=10.0, check_same_thread=False)
     except sqlite3.Error.OperationalError as e:
         logging.getLogger().error("Connecting to the internal database timed out, there are probably to many connections accessing the database")
         logging.getLogger().error(e)

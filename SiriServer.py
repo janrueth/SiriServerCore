@@ -35,6 +35,14 @@ class SiriFactory(Factory):
 
     def __init__(self):
         self.numberOfConnections = 0
+        self.sessionCert = None
+        self.sessionCACert = None
+        self.dbConnection = None
+        
+    def buildProtocol(self, addr):
+        return SiriProtocolHandler(self, addr)
+    
+    def startFactory(self):
         logging.getLogger().info("Loading Session Certificates")
         caFile = open("keys/SessionCACert.pem")
         self.sessionCACert = crypto.load_certificate(crypto.FILETYPE_PEM,caFile.read())
@@ -44,15 +52,17 @@ class SiriFactory(Factory):
         sessionCertFile.close() 
         logging.getLogger().info("Setting Up Database")
         db.setup()
+        logging.getLogger().info("Connection to Database")
+        self.dbConnection = db.getConnection()
         logging.getLogger().info("Loading Plugin Framework")
         PluginManager.load_api_keys()
         PluginManager.load_plugins()
         logging.getLogger().info("Server is running and listening for connections")
         
-    def buildProtocol(self, addr):
-        return SiriProtocolHandler(self, addr)
-    
-    
+    def stopFactory(self):
+        logging.getLogger().info("Server is shutting down")
+        self.dbConnection.close()
+        logging.getLogger().info("Database Connection Closed")
 
 def main():
 
@@ -78,6 +88,7 @@ def main():
     x.info("Starting server on port {0}".format(options.port))
     reactor.listenSSL(options.port, SiriFactory(), ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt'))
     reactor.run()
-
+    x.info("Server shutdown complete")
+    
 if __name__ == "__main__":
     main()
