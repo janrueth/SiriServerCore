@@ -1,0 +1,11 @@
+*.pyc
+.DS_Store
+.project
+.pydevproject
+.settings
+database.sqlite3
+apiKeys.conf
+plugins.conf
+ca.pem
+server.crt
+server.key
