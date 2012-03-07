@@ -1,0 +1,7 @@
+# here you can configure which plugins are loaded
+#
+# The order in which they appear defines the order in which they are queried for responses to speech
+# The plugin must be in the plugins folder
+
+
+examplePlugin

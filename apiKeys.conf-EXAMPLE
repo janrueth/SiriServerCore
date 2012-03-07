@@ -1,0 +1,9 @@
+# this file defines all commonly used api keys for plugins
+# you must define a api like this:
+
+# apiName="APIKEY"
+
+wolframalpha = ""
+wordnik = ""
+wundergrounds = ""
+
