@@ -56,8 +56,8 @@ I work with python 2.6.6 and 2.7.2 and both work.
 
 You also need some python packages to make it work:
 
-	(twisted)[http://twistedmatrix.com/] 
-	(pyOpenSSL)[https://launchpad.net/pyopenssl]
+	[twisted](http://twistedmatrix.com/)
+	[pyOpenSSL](https://launchpad.net/pyopenssl)
 
 pyOpenSSL is also a requirement for twisted, so installing twisted will already force an installation of pyOpenSSL.
 
