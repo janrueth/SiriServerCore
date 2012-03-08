@@ -1,6 +1,18 @@
 Siri Server Core
 ===========
 
+Do you like this?
+-----------------
+If you like this piece of software you can help me by donating, I can afford new devices and so get deeper to the core of all of this. Make it even cooler.
+Or if you just want to give me a little credit for my work. But don't worry the code will remain free, you don't have to donate.
+
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="2E3TD99JETMA4">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
+<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+</form>
+
 
 What is this?
 -------------
