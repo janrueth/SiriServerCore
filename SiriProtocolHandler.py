@@ -166,7 +166,7 @@ class SiriProtocolHandler(Siri):
             encoder.encode(pcm)
                 
         elif plist['class'] == 'StartCorrectedSpeechRequest':
-            self.process_recognized_speech({u'hypotheses': [{'confidence': 1.0, 'utterance': str.lower(plist['properties']['utterance'])}]}, plist['aceId'], False)
+            self.process_recognized_speech({u'hypotheses': [{'confidence': 1.0, 'utterance': plist['properties']['utterance']}]}, plist['aceId'], False)
     
         elif ObjectIsCommand(plist, FinishSpeech):
             self.logger.debug("End of speech received")
