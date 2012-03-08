@@ -15,7 +15,7 @@ class examplePlugin(Plugin):
             answer = self.ask(u"Willst du das wirklich wissen?")
             self.say(u"Du hast \"{0}\" gesagt!".format(answer))
         else:
-            self.say("I shouldn't tell you!")
+            self.say("I shouldn't tell you {0}!".format(self.user_name()))
         self.complete_request()
 
     @register("de-DE", ".*standort.*test.*")
