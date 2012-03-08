@@ -27,12 +27,15 @@ def getConnection():
     return None
 
 class Assistant(object):
-    def __init__(self, assistantId=str.upper(str(uuid4()))):
-        self.assistantId = assistantId
-        self.censorspeech = None
+    def __init__(self):
+        self.assistantId = None
+        self.speechId= None    
+        self.censorSpeech = None
         self.timeZoneId = None
         self.language = None
         self.region = None
+        self.nickName = u''
+        self.firstName=u''
 
 
 def adaptAssistant(assistant):

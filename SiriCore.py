@@ -128,7 +128,16 @@ class Siri(LineReceiver):
     def hasNextObj(self):
         if len(self.unzipped_input) == 0:
             return False
-        cmd, data = struct.unpack('>BI', self.unzipped_input[:5])
+        #here comes a critical error! Sometimes the packet is less than :5 lets fix that
+        #Had this problem in the ruby version when a device sent a chopped ping? 
+        #solution was to replace the unziped manually with some other ping, pong value
+        try:
+            cmd, data = struct.unpack('>BI', self.unzipped_input[:5])        
+        except:
+            self.logger.info("Run into critical!!!!")
+            cmd=3
+            data=3
+            
         if cmd in (3,4): #ping pong
             return True
         if cmd == 2:

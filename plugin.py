@@ -191,3 +191,12 @@ class Plugin(threading.Thread):
             speakableText = text
         view.views += [AssistantUtteranceView(text, speakableText)]
         self.send_object(view)
+        
+    def user_name(self):
+        if self.assistant.nickName!='':
+            self.user_name=self.assistant.nickName.decode("utf-8")
+        elif self.assistant.firstName!='':
+            self.user_name=self.assistant.firstName.decode("utf-8")
+        else:
+            self.user_name=u''
+        return self.user_name
