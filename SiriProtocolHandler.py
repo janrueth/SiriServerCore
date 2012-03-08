@@ -215,7 +215,8 @@ class SiriProtocolHandler(Siri):
             
         elif plist['class'] == 'CreateAssistant':
             #create a new assistant
-            helper = Assistant()           
+            helper = Assistant()     
+            helper.assistantId=str.upper(str(uuid.uuid4())) 
             c = self.dbConnection.cursor()
             noError = True
             try:
