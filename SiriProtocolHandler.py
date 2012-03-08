@@ -256,7 +256,9 @@ class SiriProtocolHandler(Siri):
                 except:
                     self.send_plist({"class":"CommandFailed", "properties": {"reason":"Database error", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": plist['aceId'], "group":"com.apple.ace.system"})
                     self.logger.error("Database Error on setting assistant data")
-    
+            else:
+                self.send_plist({"class":"CommandFailed", "properties": {"reason":"Assistant to set data not found", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": plist['aceId'], "group":"com.apple.ace.system"})
+                self.logger.error("Trying to set assistant data without having a valid assistant")
         elif plist['class'] == 'LoadAssistant':
             try:
                 c = self.dbConnection.cursor()
@@ -268,8 +270,7 @@ class SiriProtocolHandler(Siri):
                 else:
                     self.assistant = result[0]
                     if self.assistant.language=='' or self.assistant.language==None:
-                        print "No language"
-                        c = dbConnection.cursor()
+                        print "No language"                        
                         c.execute("delete from assistants where assistantId = ?", (reqObject['properties']['assistantId'],))
                         dbConnection.commit()
                         self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
