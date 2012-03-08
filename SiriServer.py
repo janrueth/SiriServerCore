@@ -1,20 +1,28 @@
-try:
-    
-    try: 
-        from twisted.internet import epollreactor
-        epollreactor.install()
-    except:
-        print "Warning Your system does not support epoll"
-        
-    from twisted.internet import ssl, reactor
+try:    
+    from twisted.internet import ssl
     from twisted.internet.protocol import Factory
-    
-except:
+except ImportError:
     print "You need to install the twisted python libraries (http://twistedmatrix.com/trac/)\n"
     print "On a debian based system try installing python-twisted\n"
     print "On other systems, you may use easy_install or other package managers\n"
     print "Please refer to the website listed above for further installation instructions\n"
     exit(-1)
+    
+try: 
+    from twisted.internet import epollreactor
+    epollreactor.install()
+except ImportError:
+    print "Warning: Your system does not support epoll"
+    print "\t Will to use simple poll"
+    try:
+        from twisted.internet import pollreactor
+        pollreactor.install()
+    except ImportError:
+        print "Warning: Your system does not support poll"
+        print "\t Will use default select interface"
+        
+from twisted.internet import reactor
+    
 from SiriProtocolHandler import SiriProtocolHandler
 from optparse import OptionParser
 import PluginManager
