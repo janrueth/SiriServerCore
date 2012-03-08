@@ -1,9 +1,10 @@
+from plugin import Plugin, __criteria_key__, NecessaryModuleNotFound, \
+    ApiKeyNotFoundException
+from types import FunctionType
+import logging
 import os
 import re
-import logging
 
-from plugin import Plugin, __criteria_key__, NecessaryModuleNotFound, ApiKeyNotFoundException
-from types import FunctionType
 
 
 logger = logging.getLogger("logger")
@@ -51,6 +52,7 @@ def load_plugins():
 
 
 def reload_api_keys():
+    global apiKeys
     apiKeys = dict()
     load_api_keys()
 
