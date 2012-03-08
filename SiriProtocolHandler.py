@@ -258,7 +258,7 @@ class SiriProtocolHandler(Siri):
                     self.logger.error("Database Error on setting assistant data")
             else:
                 self.send_plist({"class":"CommandFailed", "properties": {"reason":"Assistant to set data not found", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": plist['aceId'], "group":"com.apple.ace.system"})
-                self.logger.error("Trying to set assistant data without having a valid assistant")
+                self.logger.warning("Trying to set assistant data without having a valid assistant")
         elif plist['class'] == 'LoadAssistant':
             try:
                 c = self.dbConnection.cursor()
@@ -267,20 +267,20 @@ class SiriProtocolHandler(Siri):
                 result = c.fetchone()
                 if result == None:
                     self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
-                    self.logger.error ("Assistant not found in database!!")                        
+                    self.logger.warning("Assistant not found in database!!")                        
                 else:
                     self.assistant = result[0]
                     if self.assistant.language=='' or self.assistant.language==None:
                         self.logger.error ("No language is set for this assistant")                        
-                        c.execute("delete from assistants where assistantId = ?", (reqObject['properties']['assistantId'],))
-                        dbConnection.commit()
-                        self.send_plist({"class":"CommandFailed", "properties": {"reason":"Database error Assistant not found or languare settings ", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": reqObject['aceId'], "group":"com.apple.ace.system"})
+                        c.execute("delete from assistants where assistantId = ?", (plist['properties']['assistantId'],))
+                        self.dbConnection.commit()
+                        self.send_plist({"class":"CommandFailed", "properties": {"reason":"Database error Assistant not found or language settings ", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": plist['aceId'], "group":"com.apple.ace.system"})
                     else:                        
                         self.send_plist({"class": "AssistantLoaded", "properties": {"version": "20111216-32234-branches/telluride?cnxn=293552c2-8e11-4920-9131-5f5651ce244e", "requestSync":False, "dataAnchor":"removed"}, "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
                 c.close()
             except:
                 self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
-                self.logger.error("Database error on fetching assistant")
+                self.logger.warning("Database error on fetching assistant")
                 
         elif plist['class'] == 'DestroyAssistant':
             try:
