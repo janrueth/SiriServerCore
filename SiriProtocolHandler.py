@@ -267,10 +267,11 @@ class SiriProtocolHandler(Siri):
                 result = c.fetchone()
                 if result == None:
                     self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
+                    self.logger.error ("Assistant not found in database!!")                        
                 else:
                     self.assistant = result[0]
                     if self.assistant.language=='' or self.assistant.language==None:
-                        print "No language"                        
+                        self.logger.error ("No language is set for this assistant")                        
                         c.execute("delete from assistants where assistantId = ?", (reqObject['properties']['assistantId'],))
                         dbConnection.commit()
                         self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
