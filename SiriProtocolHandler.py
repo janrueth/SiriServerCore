@@ -14,7 +14,6 @@ from siriObjects.systemObjects import StartRequest, SendCommands, CancelRequest,
     CreateSessionInfoRequest, CommandFailed
 from siriObjects.uiObjects import AddViews, AssistantUtteranceView, Button
 import PluginManager
-import db
 import flac
 import json
 import pprint
