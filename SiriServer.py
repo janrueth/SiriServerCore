@@ -1,6 +1,14 @@
 try:
+    
+    try: 
+        from twisted.internet import epollreactor
+        epollreactor.install()
+    except:
+        print "Warning Your system does not support epoll"
+        
     from twisted.internet import ssl, reactor
     from twisted.internet.protocol import Factory
+    
 except:
     print "You need to install the twisted python libraries (http://twistedmatrix.com/trac/)\n"
     print "On a debian based system try installing python-twisted\n"
