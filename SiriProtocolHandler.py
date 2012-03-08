@@ -215,7 +215,7 @@ class SiriProtocolHandler(Siri):
             
         elif plist['class'] == 'CreateAssistant':
             #create a new assistant
-            helper = Assistant()
+            helper = Assistant()           
             c = self.dbConnection.cursor()
             noError = True
             try:
@@ -240,6 +240,16 @@ class SiriProtocolHandler(Siri):
                     self.assistant.timeZoneId = objProperties['timeZoneId']
                     self.assistant.language = objProperties['language']
                     self.assistant.region = objProperties['region']
+                    #Record the user firstName and nickName                    
+                    try:                        
+                        self.assistant.firstName=objProperties["meCards"][0]["properties"]["firstName"].encode("utf-8")
+                    except KeyError:
+                        self.assistant.firstName=u''                        
+                    try:                        
+                        self.assistant.nickName=objProperties["meCards"][0]["properties"]["nickName"].encode("utf-8")       
+                    except KeyError:
+                        self.assistant.nickName=u''
+                    #Done recording
                     c.execute("update assistants set assistant = ? where assistantId = ?", (self.assistant, self.assistant.assistantId))
                     self.dbConnection.commit()
                     c.close()
