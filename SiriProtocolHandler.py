@@ -274,7 +274,7 @@ class SiriProtocolHandler(Siri):
                         self.logger.error ("No language is set for this assistant")                        
                         c.execute("delete from assistants where assistantId = ?", (reqObject['properties']['assistantId'],))
                         dbConnection.commit()
-                        self.send_plist({"class": "AssistantNotFound", "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
+                        self.send_plist({"class":"CommandFailed", "properties": {"reason":"Database error Assistant not found or languare settings ", "errorCode":2, "callbacks":[]}, "aceId": str(uuid.uuid4()), "refId": reqObject['aceId'], "group":"com.apple.ace.system"})
                     else:                        
                         self.send_plist({"class": "AssistantLoaded", "properties": {"version": "20111216-32234-branches/telluride?cnxn=293552c2-8e11-4920-9131-5f5651ce244e", "requestSync":False, "dataAnchor":"removed"}, "aceId":str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
                 c.close()
