@@ -8,24 +8,10 @@ except ImportError:
     print "Please refer to the website listed above for further installation instructions\n"
     exit(-1)
     
-try: 
-    from twisted.internet import epollreactor
-    epollreactor.install()
-except ImportError:
-    print "Warning: Your system does not support epoll"
-    print "\t Will to use simple poll"
-    try:
-        from twisted.internet import pollreactor
-        pollreactor.install()
-    except ImportError:
-        print "Warning: Your system does not support poll"
-        print "\t Will use default select interface"
-        
 from SiriProtocolHandler import SiriProtocolHandler
 from optparse import OptionParser
 from os.path import exists
 from socket import gethostname
-from twisted.internet import reactor
 import PluginManager
 import db
 import logging
@@ -217,6 +203,21 @@ def main():
     x.addHandler(h)
     
     create_self_signed_cert()
+    
+    try: 
+        from twisted.internet import epollreactor
+        epollreactor.install()
+    except ImportError:
+        x.debug("System does not support epoll")
+        x.debug("-> Will use simple poll")
+        try:
+            from twisted.internet import pollreactor
+            pollreactor.install()
+        except ImportError:
+            x.debug("System does not support poll")
+            x.debug("-> Will use default select interface")
+    from twisted.internet import reactor
+
     
     x.info("Starting server on port {0}".format(options.port))
     reactor.listenSSL(options.port, SiriFactory(), ssl.DefaultOpenSSLContextFactory(SERVER_KEY_FILE, SERVER_CERT_FILE))
