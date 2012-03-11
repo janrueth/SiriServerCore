@@ -86,6 +86,7 @@ class Plugin(threading.Thread):
         self.__send_object = send_object
         self.assistant = assistant
         self.location = location
+        
 
     def run(self):
         try:
@@ -104,12 +105,23 @@ class Plugin(threading.Thread):
             except StopPluginExecution, instance:
                 self.logger.warning("Plugin stopped executing with reason: {0}".format(instance))
             except:
-                self.logger.exception("Unexpected during plugin processing")
+                self.logger.exception("Unexpected error during plugin processing")
                 self.say(__error_responses__[self.__lang])
                 self.complete_request()
         except:
             pass
         self.connection.current_running_plugin = None
+        self.connection = None
+        self.assistant = None
+        self.location = None
+        self.__send_object = None
+        self.__send_plist = None
+        self.__method = None
+        self.__lang = None
+        self.__speech = None
+        self.waitForResponse = None
+        self.response = None
+        self.refId = None
 
     def requestPriorityOnNextRequest(self):
         self.__priority = True
