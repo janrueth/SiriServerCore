@@ -57,7 +57,10 @@ class SiriProtocolHandler(Siri):
         possible_matches = googleJson['hypotheses']
         if len(possible_matches) > 0:
             best_match = possible_matches[0]['utterance']
-            best_match = best_match[0].upper()+best_match[1:]
+            if len(best_match == 1):
+                best_match = best_match.upper()
+            else:
+                best_match = best_match[0].upper()+best_match[1:]
             best_match_confidence = possible_matches[0]['confidence']
             self.logger.info(u"Best matching result: \"{0}\" with a confidence of {1}%".format(best_match, round(float(best_match_confidence)*100,2)))
             # construct a SpeechRecognized
