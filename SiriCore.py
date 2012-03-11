@@ -54,7 +54,12 @@ class Siri(LineReceiver):
             self.logger.error("Connection Lost: {0}".format(reason))
         self.server.numberOfConnections -= 1
         self.logger.info("Currently {0} clients connected".format(self.server.numberOfConnections))
-
+        self.server = None
+        self.peer = None
+        self.decompressor = None
+        self.compressor = None
+        self.sendLock = None
+        
     def checkHeader(self):
         if "\r\n\r\n" in self.header:
             # end of header found, lets check it
@@ -74,7 +79,7 @@ class Siri(LineReceiver):
             return False
     
     def lineReceived(self, line):
-        self.header += line+"\r\n"
+        self.header += line + "\r\n"
         headerCheck = self.checkHeader();
         success = False
         if type(headerCheck) == bool:
@@ -88,7 +93,7 @@ class Siri(LineReceiver):
         else:
             code, message = headerCheck
             
-        self.output_buffer = ("HTTP/1.1 {0} {1}\r\nServer: Apache-Coyote/1.1\r\nDate: " +  formatdate(timeval=None, localtime=False, usegmt=True) + "\r\nConnection: close\r\n\r\n").format(code, message)
+        self.output_buffer = ("HTTP/1.1 {0} {1}\r\nServer: Apache-Coyote/1.1\r\nDate: " + formatdate(timeval=None, localtime=False, usegmt=True) + "\r\nConnection: close\r\n\r\n").format(code, message)
         self.flush_output_buffer()
         if not success:
             self.transport.loseConnection()
@@ -133,7 +138,7 @@ class Siri(LineReceiver):
         
         cmd, data = struct.unpack('>BI', self.unzipped_input[:5])        
             
-        if cmd in (3,4): #ping pong
+        if cmd in (3, 4): #ping pong
             return True
         if cmd == 2:
             return ((data + 5) < len(self.unzipped_input))
@@ -145,8 +150,8 @@ class Siri(LineReceiver):
             return Ping(data)
 
         object_size = data
-        object_data = self.unzipped_input[5:object_size+5]
-        self.unzipped_input = self.unzipped_input[object_size+5:]
+        object_data = self.unzipped_input[5:object_size + 5]
+        self.unzipped_input = self.unzipped_input[object_size + 5:]
         return ServerObject(object_data)
     
     def send_object(self, obj):
@@ -155,7 +160,7 @@ class Siri(LineReceiver):
     def send_plist(self, plist):
         self.sendLock.acquire()
         bplist = biplist.writePlistToString(plist);
-        self.unzipped_output_buffer = struct.pack('>BI', 2,len(bplist)) + bplist
+        self.unzipped_output_buffer = struct.pack('>BI', 2, len(bplist)) + bplist
         self.flush_unzipped_output() 
         self.sendLock.release()
     
