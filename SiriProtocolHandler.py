@@ -86,7 +86,7 @@ class SiriProtocolHandler(Siri):
         possible_matches = googleJson['hypotheses']
         if len(possible_matches) > 0:
             best_match = possible_matches[0]['utterance']
-            if len(best_match == 1):
+            if len(best_match) == 1:
                 best_match = best_match.upper()
             else:
                 best_match = best_match[0].upper() + best_match[1:]
