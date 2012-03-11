@@ -19,12 +19,17 @@ import json
 import pprint
 import speex
 import sqlite3
+import time
 import uuid
+import twisted
+
+       
 
 class SiriProtocolHandler(Siri):
-    __not_recognized =  {"de-DE": u"Entschuldigung, ich verstehe \"{0}\" nicht.", "en-US": u"Sorry I don't understand {0}", "fr-FR": u"Désolé je ne comprends pas ce que \"{0}\" veut dire."}
-    __websearch =  {"de-DE": u"Websuche", "en-US": u"Websearch", "fr-FR": u"Rechercher sur le Web"}
-    
+    __not_recognized = {"de-DE": u"Entschuldigung, ich verstehe \"{0}\" nicht.", "en-US": u"Sorry I don't understand {0}", "fr-FR": u"Désolé je ne comprends pas ce que \"{0}\" veut dire."}
+    __websearch = {"de-DE": u"Websuche", "en-US": u"Websearch", "fr-FR": u"Rechercher sur le Web"}
+    __scheduling_interval_timeout__ = 20
+    __timeout_delay = 10
     
     def __init__(self, server, peer):
         Siri.__init__(self, server, peer)
@@ -38,6 +43,29 @@ class SiriProtocolHandler(Siri):
         self.httpClient = AsyncOpenHttp(self.handle_google_data)
         self.current_google_request = None
         self.current_location = None
+        self.lastPingTime = time.time()
+        self.timeoutschedule = twisted.internet.reactor.callLater(SiriProtocolHandler.__scheduling_interval_timeout__, self.checkTimeout)
+        
+    def seconds_since_last_ping(self):
+        return time.time() - self.lastPingTime
+    
+    def connectionLost(self, reason):
+        try:
+            self.timeoutschedule.cancel()
+        except:
+            pass
+        self.current_running_plugin = None
+        self.dbConnection = None
+        self.speech = None
+        self.httpClient = None
+        Siri.connectionLost(self, reason)
+    
+    def checkTimeout(self):
+        if self.seconds_since_last_ping() > SiriProtocolHandler.__timeout_delay:
+            self.logger.info("Connection timed out")
+            self.transport.loseConnection() 
+        else:
+            self.timeoutschedule.reset(SiriProtocolHandler.__timeout_delay)  
     
     def handle_google_data(self, body, requestId, dictation):
         self.current_google_request = None
@@ -51,6 +79,7 @@ class SiriProtocolHandler(Siri):
     def received_ping(self, numOfPing):
         self.pong += 1
         self.lastPing = numOfPing
+        self.lastPingTime = time.time()
         self.send_pong(self.pong)
         
     def process_recognized_speech(self, googleJson, requestId, dictation):
@@ -60,9 +89,9 @@ class SiriProtocolHandler(Siri):
             if len(best_match == 1):
                 best_match = best_match.upper()
             else:
-                best_match = best_match[0].upper()+best_match[1:]
+                best_match = best_match[0].upper() + best_match[1:]
             best_match_confidence = possible_matches[0]['confidence']
-            self.logger.info(u"Best matching result: \"{0}\" with a confidence of {1}%".format(best_match, round(float(best_match_confidence)*100,2)))
+            self.logger.info(u"Best matching result: \"{0}\" with a confidence of {1}%".format(best_match, round(float(best_match_confidence) * 100, 2)))
             # construct a SpeechRecognized
             token = Token(best_match, 0, 0, 1000.0, True, True)
             interpretation = Interpretation([token])
@@ -218,7 +247,7 @@ class SiriProtocolHandler(Siri):
         elif plist['class'] == 'CreateAssistant':
             #create a new assistant
             helper = Assistant()     
-            helper.assistantId=str.upper(str(uuid.uuid4())) 
+            helper.assistantId = str.upper(str(uuid.uuid4())) 
             c = self.dbConnection.cursor()
             noError = True
             try:
@@ -245,13 +274,13 @@ class SiriProtocolHandler(Siri):
                     self.assistant.region = objProperties['region']
                     #Record the user firstName and nickName                    
                     try:                        
-                        self.assistant.firstName=objProperties["meCards"][0]["properties"]["firstName"].encode("utf-8")
+                        self.assistant.firstName = objProperties["meCards"][0]["properties"]["firstName"].encode("utf-8")
                     except KeyError:
-                        self.assistant.firstName=u''                        
+                        self.assistant.firstName = u''                        
                     try:                        
-                        self.assistant.nickName=objProperties["meCards"][0]["properties"]["nickName"].encode("utf-8")       
+                        self.assistant.nickName = objProperties["meCards"][0]["properties"]["nickName"].encode("utf-8")       
                     except KeyError:
-                        self.assistant.nickName=u''
+                        self.assistant.nickName = u''
                     #Done recording
                     c.execute("update assistants set assistant = ? where assistantId = ?", (self.assistant, self.assistant.assistantId))
                     self.dbConnection.commit()
@@ -273,7 +302,7 @@ class SiriProtocolHandler(Siri):
                     self.logger.warning("Assistant not found in database!!")                        
                 else:
                     self.assistant = result[0]
-                    if self.assistant.language=='' or self.assistant.language==None:
+                    if self.assistant.language == '' or self.assistant.language == None:
                         self.logger.error ("No language is set for this assistant")                        
                         c.execute("delete from assistants where assistantId = ?", (plist['properties']['assistantId'],))
                         self.dbConnection.commit()
