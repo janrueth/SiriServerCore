@@ -65,7 +65,7 @@ class SiriProtocolHandler(Siri):
             self.logger.info("Connection timed out")
             self.transport.loseConnection() 
         else:
-            self.timeoutschedule.reset(SiriProtocolHandler.__timeout_delay)  
+            self.timeoutschedule = twisted.internet.reactor.callLater(SiriProtocolHandler.__scheduling_interval_timeout__, self.checkTimeout)  
     
     def handle_google_data(self, body, requestId, dictation):
         self.current_google_request = None
