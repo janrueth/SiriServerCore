@@ -189,12 +189,15 @@ class SiriProtocolHandler(Siri):
         elif ObjectIsCommand(plist, SpeechPacket):
             self.logger.debug("Decoding speech packet")
             speechPacket = SpeechPacket(plist)
-            (decoder, encoder, dictation) = self.speech[speechPacket.refId]
-            if decoder:
-                pcm = decoder.decode(speechPacket.packets)
+            if speechPacket.refId in self.speech:
+                (decoder, encoder, dictation) = self.speech[speechPacket.refId]
+                if decoder:
+                    pcm = decoder.decode(speechPacket.packets)
+                else:
+                    pcm = SpeechPacket.data # <- probably data... if pcm
+                encoder.encode(pcm)
             else:
-                pcm = SpeechPacket.data # <- probably data... if pcm
-            encoder.encode(pcm)
+                self.logger.debug("Got a speech packet that did not match any current request")
                 
         elif plist['class'] == 'StartCorrectedSpeechRequest':
             self.process_recognized_speech({u'hypotheses': [{'confidence': 1.0, 'utterance': plist['properties']['utterance']}]}, plist['aceId'], False)
@@ -202,30 +205,33 @@ class SiriProtocolHandler(Siri):
         elif ObjectIsCommand(plist, FinishSpeech):
             self.logger.debug("End of speech received")
             finishSpeech = FinishSpeech(plist)
-            (decoder, encoder, dictation) = self.speech[finishSpeech.refId]
-            if decoder:
-                decoder.destroy()
-            encoder.finish()
-            flacBin = encoder.getBinary()
-            encoder.destroy()
-            del self.speech[finishSpeech.refId]
-            
-            self.logger.info("Sending flac to google for recognition")
-            try:
-                self.current_google_request = self.httpClient.make_google_request(flacBin, finishSpeech.refId, dictation, language=self.assistant.language, allowCurses=True)
-            except AttributeError, TypeError:
-                self.logger.warning("Unable to find language record for this assistant. Try turning Siri off and then back on.")
+            if finishSpeech.refId in self.speech:
+                (decoder, encoder, dictation) = self.speech[finishSpeech.refId]
+                if decoder:
+                    decoder.destroy()
+                encoder.finish()
+                flacBin = encoder.getBinary()
+                encoder.destroy()
+                del self.speech[finishSpeech.refId]
+                
+                self.logger.info("Sending flac to google for recognition")
+                try:
+                    self.current_google_request = self.httpClient.make_google_request(flacBin, finishSpeech.refId, dictation, language=self.assistant.language, allowCurses=True)
+                except (AttributeError, TypeError):
+                    self.logger.warning("Unable to find language record for this assistant. Try turning Siri off and then back on.")
+            else:
+                self.logger.debug("Got a finish speech packet that did not match any current request")
                 
         elif ObjectIsCommand(plist, CancelRequest):
-                # this is probably called when we need to kill a plugin
-                # wait for thread to finish a send
-                self.logger.debug("Should cancel current request")
-                cancelRequest = CancelRequest(plist)
-                if cancelRequest.refId in self.speech:
-                    del self.speech[cancelRequest.refId]
-                if self.current_google_request != None:
-                    self.current_google_request.cancel()
-                self.send_object(CancelSucceeded(cancelRequest.aceId))
+            # this is probably called when we need to kill a plugin
+            # wait for thread to finish a send
+            self.logger.debug("Should cancel current request")
+            cancelRequest = CancelRequest(plist)
+            if cancelRequest.refId in self.speech:
+                del self.speech[cancelRequest.refId]
+            if self.current_google_request != None:
+                self.current_google_request.cancel()
+            self.send_object(CancelSucceeded(cancelRequest.aceId))
 
         elif ObjectIsCommand(plist, GetSessionCertificate):
             getSessionCertificate = GetSessionCertificate(plist)
