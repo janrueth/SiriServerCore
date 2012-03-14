@@ -74,8 +74,9 @@ class Plugin(threading.Thread):
         self.__send_object = None
         self.assistant = None
         self.location = None
-        self.logger = logging.getLogger("logger")
+        self.logger = logging.getLogger()
         self.__priority = False
+        self.__shouldCancel = False
     
     def initialize(self, method, speech, language, send_object, send_plist, assistant, location):
         super(Plugin, self).__init__()
@@ -86,6 +87,10 @@ class Plugin(threading.Thread):
         self.__send_object = send_object
         self.assistant = assistant
         self.location = location
+        self.__shouldCancel = False
+        
+    def _abortPluginRun(self):
+        self.__shouldCancel = True
         
 
     def run(self):
@@ -103,7 +108,7 @@ class Plugin(threading.Thread):
             except ApiKeyNotFoundException as e:
                 self.logger.warning("Failed executing plugin due to missing API key: "+str(e))
             except StopPluginExecution, instance:
-                self.logger.warning("Plugin stopped executing with reason: {0}".format(instance))
+                self.logger.info("Plugin stopped executing with reason: {0}".format(instance))
             except:
                 self.logger.exception("Unexpected error during plugin processing")
                 self.say(__error_responses__[self.__lang])
@@ -122,11 +127,17 @@ class Plugin(threading.Thread):
         self.waitForResponse = None
         self.response = None
         self.refId = None
+        
+    def _checkForCancelRequest(self):
+        if self.__shouldCancel:
+            raise StopPluginExecution("Plugin run was aborted")
 
     def requestPriorityOnNextRequest(self):
+        self._checkForCancelRequest()
         self.__priority = True
 
     def getCurrentLocation(self, force_reload=False, accuracy=GetRequestOrigin.desiredAccuracyBest):
+        self._checkForCancelRequest()
         if self.location != None and force_reload == False:
             return self.location
         if self.location == None or (self.location != None and force_reload):
@@ -159,18 +170,22 @@ class Plugin(threading.Thread):
                 raise Exception()
      
     def send_object(self, obj):
+        self._checkForCancelRequest()
         self.connection.plugin_lastAceId = obj.aceId
         self.__send_object(obj)
     
     def send_plist(self, plist):
+        self._checkForCancelRequest()
         self.connection.plugin_lastAceId = plist['aceId']
         self.__send_plist(plist)
 
     def complete_request(self, callbacks=None):
+        self._checkForCancelRequest()
         self.connection.current_running_plugin = None
         self.send_object(RequestCompleted(self.refId, callbacks))
 
     def ask(self, text, speakableText=""):
+        self._checkForCancelRequest()
         self.waitForResponse = threading.Event()
         if speakableText == "":
             speakableText = text
@@ -178,26 +193,31 @@ class Plugin(threading.Thread):
         view.views += [AssistantUtteranceView(text, speakableText, listenAfterSpeaking=True)]
         self.send_object(view)
         self.waitForResponse.wait()
+        self._checkForCancelRequest()
         self.waitForResponse = None
         return self.response
 
     def getResponseForRequest(self, clientBoundCommand):
+        self._checkForCancelRequest()
         self.waitForResponse = threading.Event()
         if isinstance(clientBoundCommand, ClientBoundCommand):
             self.send_object(clientBoundCommand)
         else:
             self.send_plist(clientBoundCommand)
         self.waitForResponse.wait()
+        self._checkForCancelRequest()
         self.waitForResponse = None
         return self.response
     
     def sendRequestWithoutAnswer(self, clientBoundCommand):
+        self._checkForCancelRequest()
         if isinstance(clientBoundCommand, ClientBoundCommand):
             self.send_object(clientBoundCommand)
         else:
             self.send_plist(clientBoundCommand)
 
     def say(self, text, speakableText=""):
+        self._checkForCancelRequest()
         view = AddViews(self.refId)
         if speakableText == "":
             speakableText = text
