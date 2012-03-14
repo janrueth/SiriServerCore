@@ -231,6 +231,13 @@ class SiriProtocolHandler(Siri):
                 del self.speech[cancelRequest.refId]
             if self.current_google_request != None:
                 self.current_google_request.cancel()
+                
+            #abort a running plugin
+            if self.current_running_plugin != None:
+                self.current_running_plugin._abortPluginRun()
+                if self.current_running_plugin.waitForResponse != None:
+                    self.current_running_plugin.waitForResponse.set()
+            
             self.send_object(CancelSucceeded(cancelRequest.aceId))
 
         elif ObjectIsCommand(plist, GetSessionCertificate):
