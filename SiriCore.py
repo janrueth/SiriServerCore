@@ -12,6 +12,7 @@ import logging
 import struct
 import threading
 import zlib
+import pprint
 
 class Ping(object):
     def __init__(self, num):
@@ -159,6 +160,8 @@ class Siri(LineReceiver):
 
     def send_plist(self, plist):
         self.sendLock.acquire()
+        self.logger.debug("Sending packet with class: {0}".format(plist['class']))
+        self.logger.debug("packet with content:\n{0}".format(pprint.pformat(plist, width=40)))
         bplist = biplist.writePlistToString(plist);
         self.unzipped_output_buffer = struct.pack('>BI', 2, len(bplist)) + bplist
         self.flush_unzipped_output() 
