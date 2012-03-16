@@ -134,7 +134,7 @@ class SiriProtocolHandler(Siri):
                 self.send_object(RequestCompleted(requestId))
     
     def received_plist(self, plist):
-        self.logger.debug("Packet with class: {0}".format(plist['class']))
+        self.logger.debug("Got packet with class: {0}".format(plist['class']))
         self.logger.debug("packet with content:\n{0}".format(pprint.pformat(plist, width=40)))
         
         # first handle speech stuff
@@ -231,12 +231,16 @@ class SiriProtocolHandler(Siri):
                 del self.speech[cancelRequest.refId]
             if self.current_google_request != None:
                 self.current_google_request.cancel()
-                
-            #abort a running plugin
+                # if a google request is running (follow up listening..., plugin might get killed there by user)
+                if self.current_running_plugin != None:
+                    if self.current_running_plugin.waitForResponse != None:
+                        self.current_running_plugin._abortPluginRun()
+                        self.current_running_plugin.waitForResponse.set()
+                        
+            # if a plugin is running (processing, but not waiting for data from the device we kill it)   
             if self.current_running_plugin != None:
-                self.current_running_plugin._abortPluginRun()
-                if self.current_running_plugin.waitForResponse != None:
-                    self.current_running_plugin.waitForResponse.set()
+                if self.current_running_plugin.waitForResponse == None:
+                    self.current_running_plugin._abortPluginRun()     
             
             self.send_object(CancelSucceeded(cancelRequest.aceId))
 
