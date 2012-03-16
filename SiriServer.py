@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
 try:    
     from twisted.internet import ssl
     from twisted.internet.protocol import Factory
