@@ -62,8 +62,14 @@ class DomainObjectCreate(ClientBoundCommand):
         self.add_property('object')
         return super(DomainObjectCreate, self).to_plist()
 
+class DomainObjectCreateCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectCreateCompleted"
+    groupIdentifier = "com.apple.ace.system"
 
-
+    def __init__(self, plist):
+        self.identifier = None #string
+        super(DomainObjectCreateCompleted, self).__init__(plist)
+        
 class DomainObjectRetrieve(ClientBoundCommand):
     def __init__(self, refId, identifiers=None):
         super(DomainObjectRetrieve, self).__init__("DomainObjectRetrieve", "com.apple.ace.system", None, refId)
@@ -73,7 +79,15 @@ class DomainObjectRetrieve(ClientBoundCommand):
         self.add_property('identifiers')
         return super(DomainObjectRetrieve, self).to_plist()
 
+class DomainObjectRetrieveCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectRetrieveCompleted"
+    groupIdentifier = "com.apple.ace.system"
 
+    def __init__(self, plist):
+        self.objects = [] #array
+        super(DomainObjectRetrieveCompleted, self).__init__(plist)
+        
+        
 class DomainObjectUpdate(ClientBoundCommand):
     def __init__(self, refId, identifier=None, addFields=None, setFields=None, removeFields=None):
         super(DomainObjectUpdate, self).__init__("DomainObjectUpdate", "com.apple.ace.system", None, refId)
@@ -89,7 +103,13 @@ class DomainObjectUpdate(ClientBoundCommand):
         self.add_property('removeFields')
         return super(DomainObjectUpdate, self).to_plist()
 
+class DomainObjectUpdateCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectUpdateCompleted"
+    groupIdentifier = "com.apple.ace.system"
 
+    def __init__(self, plist):
+        self.identifier = None #string
+        super(DomainObjectUpdateCompleted, self).__init__(plist)
 
 class DomainObjectCommit(ClientBoundCommand):
     def __init__(self, refId, identifier=None):
@@ -99,6 +119,49 @@ class DomainObjectCommit(ClientBoundCommand):
     def to_plist(self):
         self.add_property('identifier')
         return super(DomainObjectCommit, self).to_plist()
+    
+class DomainObjectCommitCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectCommitCompleted"
+    groupIdentifier = "com.apple.ace.system"
+
+    def __init__(self, plist):
+        self.identifier = None #string
+        super(DomainObjectCommitCompleted, self).__init__(plist)
+        
+class DomainObjectCancel(ClientBoundCommand):
+    def __init__(self, refId, identifier=None):
+        super(DomainObjectCancel, self).__init__("DomainObjectCancel", "com.apple.ace.system", None, refId)
+        self.identifier = identifier
+    
+    def to_plist(self):
+        self.add_property('identifier')
+        return super(DomainObjectCancel, self).to_plist()
+    
+class DomainObjectCancelCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectCancelCompleted"
+    groupIdentifier = "com.apple.ace.system"
+
+    def __init__(self, plist):
+        self.identifier = None #string
+        super(DomainObjectCancelCompleted, self).__init__(plist)
+        
+        
+class DomainObjectDelete(ClientBoundCommand):
+    def __init__(self, refId, identifier=None):
+        super(DomainObjectDelete, self).__init__("DomainObjectDelete", "com.apple.ace.system", None, refId)
+        self.identifier = identifier
+    
+    def to_plist(self):
+        self.add_property('identifier')
+        return super(DomainObjectDelete, self).to_plist()
+    
+class DomainObjectDeleteCompleted(ServerBoundCommand):
+    classIdentifier = "DomainObjectDeleteCompleted"
+    groupIdentifier = "com.apple.ace.system"
+
+    def __init__(self, plist):
+        self.identifier = None #string
+        super(DomainObjectDeleteCompleted, self).__init__(plist)
 
 class StartRequest(AceObject):
     def __init__(self, handsFree=False, utterance=""):
