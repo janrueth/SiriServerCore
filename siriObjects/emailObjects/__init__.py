@@ -16,9 +16,13 @@ class Email(AceObject):
         self.add_property('emailAddress')
         return super(Email, self).to_plist()
 
+#
+# Find out how this class differs from the above in terms of class/group naming
+#
+#
 class EmailEmail(DomainObject):
     def __init__(self):
-        super(EmailEmail, self).__init__("com.apple.ace.email")
+        super(EmailEmail, self).__init__("com.apple.ace.email", clazz="Email")
         self.type = None # string
         self.timeZoneId = None # string
         self.subject = None # string
@@ -48,7 +52,7 @@ class EmailEmail(DomainObject):
         return super(EmailEmail, self).to_plist()
 
 class EmailRetrieve(ClientBoundCommand):
-    def __init__(self, refid):
+    def __init__(self, refId):
         super(EmailRetrieve, self).__init__("Retrieve", "com.apple.ace.email", None, refId)
         self.requestedHeaders = None # array
         self.identifiers = None # array
