@@ -3,23 +3,6 @@ from siriObjects.uiObjects import AddViews, AssistantUtteranceView, Snippet
 from siriObjects.systemObjects import DomainObject
 
 
-class Email(AceObject):
-    def __init__(self, group="com.apple.ace.email"):
-        super(Email, self).__init__("Email", group)
-        self.label = None # string
-        self.favoriteFacetime = None # number
-        self.emailAddress = None # string
-
-    def to_plist(self):
-        self.add_property('label')
-        self.add_property('favoriteFacetime')
-        self.add_property('emailAddress')
-        return super(Email, self).to_plist()
-
-#
-# Find out how this class differs from the above in terms of class/group naming
-#
-#
 class EmailEmail(DomainObject):
     def __init__(self):
         super(EmailEmail, self).__init__("com.apple.ace.email", clazz="Email")

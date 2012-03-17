@@ -367,3 +367,18 @@ class Location(DomainObject):
         self.add_property('longitude')
         self.add_property('accuracy')
         return super(Location, self).to_plist()
+    
+    
+class Email(AceObject):
+    def __init__(self, group="com.apple.ace.system"):
+        super(Email, self).__init__("Email", group)
+        self.label = None # string
+        self.favoriteFacetime = None # number
+        self.emailAddress = None # string
+
+    def to_plist(self):
+        self.add_property('label')
+        self.add_property('favoriteFacetime')
+        self.add_property('emailAddress')
+        return super(Email, self).to_plist()
+
