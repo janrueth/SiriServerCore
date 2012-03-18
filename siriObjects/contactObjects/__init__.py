@@ -1,7 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCommand
-from siriObjects.systemObjects import DomainObject, Location, Person as SuperPerson, RelatedName as SuperRelatedName, Phone as SuperPhone
+from siriObjects.systemObjects import DomainObject, Location, Person as SuperPerson, RelatedName as SuperRelatedName, Phone as SuperPhone, Email as SuperEmail
 from siriObjects.uiObjects import Snippet
-from siriObjects.emailObjects import Email as SuperEmail
 
 class Address(Location):
     def __init__(self, label="", street="", city="", stateCode="", countryCode="", postalCode="", latitude=0, longitude=0, accuracy=0):
