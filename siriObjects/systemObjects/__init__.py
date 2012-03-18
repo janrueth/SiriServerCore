@@ -91,10 +91,10 @@ class DomainObjectRetrieveCompleted(ServerBoundCommand):
 class DomainObjectUpdate(ClientBoundCommand):
     def __init__(self, refId, identifier=None, addFields=None, setFields=None, removeFields=None):
         super(DomainObjectUpdate, self).__init__("DomainObjectUpdate", "com.apple.ace.system", None, refId)
-        self.identifier = identifier if identifier != None else []
-        self.addFields = addFields if addFields != None else []
-        self.setFields = setFields if setFields != None else []
-        self.removeFields = removeFields if removeFields != None else []
+        self.identifier = identifier
+        self.addFields = addFields
+        self.setFields = setFields
+        self.removeFields = removeFields
         
     def to_plist(self):
         self.add_property('identifier')
