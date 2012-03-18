@@ -49,6 +49,14 @@ class ReminderDateTimeTrigger(ReminderTrigger):
 
 
 class ReminderDateTimeTriggerOffset(ReminderTrigger):
+    TimeUnitDayValue = "Day"
+    TimeUnitMonthValue = "Month"
+    TimeUnitWeekValue = "Week"
+    TimeUnitYearValue = "Year"
+    TimeUnitHourValue = "Hour"
+    TimeUnitMinuteValue = "Minute"
+    TimeUnitSecondValue = "Second"
+    
     def __init__(self):
         super(ReminderDateTimeTriggerOffset, self).__init__("DateTimeTriggerOffset", "com.apple.ace.reminder")
         self.offsetValue = None # number
@@ -100,6 +108,9 @@ class ReminderListSearchCompleted(ServerBoundCommand):
         
         
 class ReminderLocationTrigger(ReminderTrigger):
+    TimingOnArrivalValue = "OnArrival"
+    TimingOnDepartureValue = "OnDeparture"
+    
     def __init__(self):
         super(ReminderLocationTrigger, self).__init__("LocationTrigger", "com.apple.ace.reminder")
         self.timing = None # string
@@ -151,6 +162,14 @@ class ReminderPhonePayload(ReminderPayload):
  
 
 class ReminderRecurrence(AceObject):
+    DayOfWeekSundayValue = "Sunday"
+    DayOfWeekMondayValue = "Monday"
+    DayOfWeekTuesdayValue = "Tuesday"
+    DayOfWeekWednesdayValue = "Wednesday"
+    DayOfWeekThursdayValue = "Thursday"
+    DayOfWeekFridayValue = "Friday"
+    DayOfWeekSaturdayValue = "Saturday"
+    
     def __init__(self):
         super(ReminderRecurrence, self).__init__("Recurrence", "com.apple.ace.reminder")
         self.weeksOfTheYear = None # array
