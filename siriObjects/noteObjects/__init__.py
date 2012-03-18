@@ -1,4 +1,4 @@
-from siriObjects.baseObjects import ClientBoundCommands, AceObject
+from siriObjects.baseObjects import ClientBoundCommand, AceObject
 
 class NoteSnippet(AceObject):
     def __init__(self, notes=None, temporary=False, dialogPhase="Summary"):
