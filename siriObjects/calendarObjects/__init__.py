@@ -1,5 +1,4 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject
-from siriObjects.
 
 class EventSearch(ClientBoundCommand):
     def __init__(self, refId, timeZoneId="America/Chicago", startDate=None, endDate=None, limit=10, identifier=""):
@@ -21,7 +20,7 @@ class EventSearch(ClientBoundCommand):
 
 class Event(AceObject):
     def __init__(self, timeZoneId="America/Chicago", title="", startDate=None, endDate=None):
-        super(EventObject, self).__init__("Event", "com.apple.ace.calendar")
+        super(Event, self).__init__("Event", "com.apple.ace.calendar")
         self.timeZoneId = timeZoneId
         self.title = title
         self.startDate = startDate
@@ -32,7 +31,7 @@ class Event(AceObject):
         self.add_property('title')
         self.add_property('startDate')
         self.add_property('endDate')
-        return super(EventObject, self).to_plist()
+        return super(Event, self).to_plist()
 
 
 class EventSnippet(AceObject):
