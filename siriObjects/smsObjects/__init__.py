@@ -7,7 +7,7 @@ class SmsRecipientSearch(ClientBoundCommand):
     def __init__(self, refId):
         super(SmsRecipientSearch, self).__init__("RecipientSearch", "com.apple.ace.sms", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.recipient = None # @"SAPerson"
+        self.recipient = None # @"Person"
         self.recipients = None # @"NSArray"
 
     def to_plist(self):
@@ -20,10 +20,8 @@ class SmsRecipientSearchCompleted(ServerBoundCommand):
     classIdentifier = "RecipientSearchCompleted"
     groupIdentifier = "com.apple.ace.sms"
     def __init__(self, plist):
-        self.recipient = None # @"SAPersonAttribute"
+        self.recipient = None # @"PersonAttribute"
         self.recipients = None # @"NSArray"
-        self.refId = None # @"NSString"
-        self.aceId = None # @"NSString"
         super(SmsRecipientSearchCompleted, self).__init__(plist)
 
 class SmsSearch(ClientBoundCommand):
@@ -56,8 +54,6 @@ class SmsSearchCompleted(ServerBoundCommand):
     groupIdentifier = "com.apple.ace.sms"
     def __init__(self, plist):
         self.results = None # @"NSArray"
-        self.refId = None # @"NSString"
-        self.aceId = None # @"NSString"
         super(SmsSearchCompleted, self).__init__(plist)
 
 class SmsSms(DomainObject):
@@ -67,7 +63,7 @@ class SmsSms(DomainObject):
         self.dateSent = None # @"NSDate"
         self.message = None # @"NSString"
         self.msgRecipients = None # @"NSArray"
-        self.msgSender = None # @"SAPersonAttribute"
+        self.msgSender = None # @"PersonAttribute"
         self.outgoing = None # @"NSNumber"
         self.recipients = None # @"NSArray"
         self.sender = None # @"NSString"
