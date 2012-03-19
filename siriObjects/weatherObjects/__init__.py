@@ -5,6 +5,8 @@ from siriObjects.uiObjects import Snippet
 
 
 class WeatherBarometricPressure(AceObject):
+    TrendRisingValue = "Rising"
+    TrendFallingValue = "Falling"
     def __init__(self):
         super(WeatherBarometricPressure, self).__init__("BarometricPressure", "com.apple.ace.weather")
         self.trend = None # @"NSString"
@@ -16,6 +18,55 @@ class WeatherBarometricPressure(AceObject):
         return super(WeatherBarometricPressure, self).to_plist()
 
 class WeatherCondition(AceObject):
+    ConditionCodeTornadoValue = "Tornado"
+    ConditionCodeTropical_StormValue = "Tropical_Storm"
+    ConditionCodeHurricaneValue = "Hurricane"
+    ConditionCodeSevere_ThunderstormsValue = "Severe_Thunderstorms"
+    ConditionCodeThunderstormsValue = "Thunderstorms"
+    ConditionCodeMixedRainAndSnowValue = "MixedRainAndSnow"
+    ConditionCodeMixedRainAndSleetValue = "MixedRainAndSleet"
+    ConditionCodeMixedSnowAndSleetValue = "MixedSnowAndSleet"
+    ConditionCodeFreezingDrizzleValue = "FreezingDrizzle"
+    ConditionCodeDrizzleValue = "Drizzle"
+    ConditionCodeFreezingRainValue = "FreezingRain"
+    ConditionCodeShowersValue = "Showers"
+    ConditionCodeShowers2Value = "Showers2"
+    ConditionCodeSnowFlurriesValue = "SnowFlurries"
+    ConditionCodeLightSnowShowersValue = "LightSnowShowers"
+    ConditionCodeBlowingSnowValue = "BlowingSnow"
+    ConditionCodeSnowValue = "Snow"
+    ConditionCodeHailValue = "Hail"
+    ConditionCodeSleetValue = "Sleet"
+    ConditionCodeDustValue = "Dust"
+    ConditionCodeFoggyValue = "Foggy"
+    ConditionCodeHazeValue = "Haze"
+    ConditionCodeSmokyValue = "Smoky"
+    ConditionCodeBlusteryValue = "Blustery"
+    ConditionCodeWindyValue = "Windy"
+    ConditionCodeColdValue = "Cold"
+    ConditionCodeCloudyValue = "Cloudy"
+    ConditionCodeMostlyCloudyNightValue = "MostlyCloudyNight"
+    ConditionCodeMostlyCloudyDayValue = "MostlyCloudyDay"
+    ConditionCodePartlyCloudyNightValue = "PartlyCloudyNight"
+    ConditionCodePartlyCloudyDayValue = "PartlyCloudyDay"
+    ConditionCodeClearNightValue = "ClearNight"
+    ConditionCodeSunnyValue = "Sunny"
+    ConditionCodeFairNightValue = "FairNight"
+    ConditionCodeFairDayValue = "FairDay"
+    ConditionCodeMixedRainAndHailValue = "MixedRainAndHail"
+    ConditionCodeHotValue = "Hot"
+    ConditionCodeIsolatedThunderstormsValue = "IsolatedThunderstorms"
+    ConditionCodeScatteredThunderstormsValue = "ScatteredThunderstorms"
+    ConditionCodeScatteredThunderstorms2Value = "ScatteredThunderstorms2"
+    ConditionCodeScatteredShowersValue = "ScatteredShowers"
+    ConditionCodeHeavySnowValue = "HeavySnow"
+    ConditionCodeScatteredSnowShowersValue = "ScatteredSnowShowers"
+    ConditionCodeHeavySnow2Value = "HeavySnow2"
+    ConditionCodePartlyCloudyValue = "PartlyCloudy"
+    ConditionCodeThundershowersValue = "Thundershowers"
+    ConditionCodeSnowShowersValue = "SnowShowers"
+    ConditionCodeIsolatedThundershowersValue = "IsolatedThundershowers"
+    ConditionCodeNotAvailableValue = "NotAvailable"
     def __init__(self):
         super(WeatherCondition, self).__init__("Condition", "com.apple.ace.weather")
         self.conditionCode = None # @"NSString"
@@ -27,10 +78,18 @@ class WeatherCondition(AceObject):
         return super(WeatherCondition, self).to_plist()
 
 class WeatherCurrentConditions(AceObject):
+    MoonPhaseNEWValue = "NEW"
+    MoonPhaseWAXING_CRESCENTValue = "WAXING_CRESCENT"
+    MoonPhaseFIRST_QUARTERValue = "FIRST_QUARTER"
+    MoonPhaseWAXING_GIBBOUSValue = "WAXING_GIBBOUS"
+    MoonPhaseFULLValue = "FULL"
+    MoonPhaseWANING_GIBBOUSValue = "WANING_GIBBOUS"
+    MoonPhaseTHIRD_QUARTERValue = "THIRD_QUARTER"
+    MoonPhaseWANING_CRESCENTValue = "WANING_CRESCENT"
     def __init__(self):
         super(WeatherCurrentConditions, self).__init__("CurrentConditions", "com.apple.ace.weather")
-        self.barometricPressure = None # @"SAWeatherBarometricPressure"
-        self.condition = None # @"SAWeatherCondition"
+        self.barometricPressure = None # @"WeatherBarometricPressure"
+        self.condition = None # @"WeatherCondition"
         self.dayOfWeek = None # @"NSNumber"
         self.dewPoint = None # @"NSString"
         self.feelsLike = None # @"NSString"
@@ -45,7 +104,7 @@ class WeatherCurrentConditions(AceObject):
         self.timeZone = None # @"NSString"
         self.visibility = None # @"NSString"
         self.windChill = None # @"NSString"
-        self.windSpeed = None # @"SAWeatherWindSpeed"
+        self.windSpeed = None # @"WeatherWindSpeed"
 
     def to_plist(self):
         self.add_property('barometricPressure')
@@ -72,7 +131,7 @@ class WeatherForecast(AceObject):
     def __init__(self, clazz="Forecast", group="com.apple.ace.weather"):
         super(WeatherForecast, self).__init__(clazz, group)
         self.chanceOfPrecipitation = None # @"NSNumber"
-        self.condition = None # @"SAWeatherCondition"
+        self.condition = None # @"WeatherCondition"
         self.isUserRequested = None # @"NSNumber"
         self.timeIndex = None # @"NSNumber"
 
@@ -126,7 +185,7 @@ class WeatherLocationAdd(ClientBoundCommand):
     def __init__(self, refId):
         super(WeatherLocationAdd, self).__init__("LocationAdd", "com.apple.ace.weather", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.weatherLocation = None # @"SAWeatherLocation"
+        self.weatherLocation = None # @"WeatherLocation"
 
 
     def to_plist(self):
@@ -137,18 +196,19 @@ class WeatherLocationAdd(ClientBoundCommand):
 class WeatherLocationAddCompleted(ServerBoundCommand):
     classIdentifier = "LocationAddCompleted"
     groupIdentifier = "com.apple.ace.weather"
+    
+    ErrorAlreadyExistsValue = "AlreadyExists"
+    ErrorMaxNumberExceededValue = "MaxNumberExceeded"
     def __init__(self, plist):
         self.error = None # @"NSString"
         self.weatherLocationId = None # @"NSURL"
-        self.refId = None # @"NSString"
-        self.aceId = None # @"NSString"
         super(WeatherLocationAddCompleted, self).__init__(plist)
 
 class WeatherLocationDelete(ClientBoundCommand):
     def __init__(self, refId):
         super(WeatherLocationDelete, self).__init__("LocationDelete", "com.apple.ace.weather", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.weatherLocation = None # @"SAWeatherLocation"
+        self.weatherLocation = None # @"WeatherLocation"
 
 
     def to_plist(self):
@@ -171,7 +231,6 @@ class WeatherLocationSearch(ClientBoundCommand):
         self.identifier = None # @"NSURL"
         self.locationId = None # @"NSString"
 
-
     def to_plist(self):
         self.add_property('targetAppId')
         self.add_property('identifier')
@@ -183,8 +242,6 @@ class WeatherLocationSearchCompleted(ServerBoundCommand):
     groupIdentifier = "com.apple.ace.weather"
     def __init__(self, plist):
         self.weatherLocations = None # @"NSArray"
-        self.refId = None # @"NSString"
-        self.aceId = None # @"NSString"
         super(WeatherLocationSearchCompleted, self).__init__(plist)
 
 class WeatherLocationSnippet(Snippet):
@@ -197,15 +254,17 @@ class WeatherLocationSnippet(Snippet):
         return super(WeatherLocationSnippet, self).to_plist()
 
 class WeatherObject(DomainObject):
+    ViewDAILYValue = "DAILY"
+    ViewHOURLYValue = "HOURLY"
     def __init__(self):
         super(WeatherObject, self).__init__("com.apple.ace.weather")
-        self.currentConditions = None # @"SAWeatherCurrentConditions"
+        self.currentConditions = None # @"WeatherCurrentConditions"
         self.dailyForecasts = None # @"NSArray"
         self.extendedForecastUrl = None # @"NSString"
         self.hourlyForecasts = None # @"NSArray"
-        self.units = None # @"SAWeatherUnits"
+        self.units = None # @"WeatherUnits"
         self.view = None # @"NSString"
-        self.weatherLocation = None # @"SAWeatherLocation"
+        self.weatherLocation = None # @"WeatherLocation"
 
     def to_plist(self):
         self.add_property('currentConditions')
@@ -222,7 +281,6 @@ class WeatherShowWeatherLocations(ClientBoundCommand):
         super(WeatherShowWeatherLocations, self).__init__("ShowWeatherLocations", "com.apple.ace.weather", None, refId)
         self.targetAppId = None # @"NSURL"
 
-
     def to_plist(self):
         self.add_property('targetAppId')
         return super(WeatherShowWeatherLocations, self).to_plist()
@@ -231,11 +289,22 @@ class WeatherShowWeatherLocationsCompleted(ServerBoundCommand):
     classIdentifier = "ShowWeatherLocationsCompleted"
     groupIdentifier = "com.apple.ace.weather"
     def __init__(self, plist):
-        self.refId = None # @"NSString"
-        self.aceId = None # @"NSString"
         super(WeatherShowWeatherLocationsCompleted, self).__init__(plist)
 
 class WeatherUnits(AceObject):
+    DistanceUnitsFeetValue = "Feet"
+    DistanceUnitsMilesValue = "Miles"
+    DistanceUnitsMetersValue = "Meters"
+    DistanceUnitsKilometersValue = "Kilometers"
+    
+    PressureUnitsINValue = "IN"
+    PressureUnitsMBValue = "MB"
+    
+    SpeedUnitsMPHValue = "MPH"
+    SpeedUnitsKPHValue = "KPH"
+    
+    TemperatureUnitsCelsiusValue = "Celsius"
+    TemperatureUnitsFahrenheitValue = "Fahrenheit"
     def __init__(self):
         super(WeatherUnits, self).__init__("Units", "com.apple.ace.weather")
         self.distanceUnits = None # @"NSString"
@@ -251,6 +320,14 @@ class WeatherUnits(AceObject):
         return super(WeatherUnits, self).to_plist()
 
 class WeatherWindSpeed(AceObject):
+    DirectionNorthValue = "North"
+    DirectionNorthEastValue = "NorthEast"
+    DirectionEastValue = "East"
+    DirectionSouthEastValue = "SouthEast"
+    DirectionSouthValue = "South"
+    DirectionSouthWestValue = "SouthWest"
+    DirectionWestValue = "West"
+    DirectionNorthWestValue = "NorthWest"
     def __init__(self):
         super(WeatherWindSpeed, self).__init__("WindSpeed", "com.apple.ace.weather")
         self.value = None # @"NSString"
