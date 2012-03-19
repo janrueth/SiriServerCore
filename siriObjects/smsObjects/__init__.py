@@ -89,7 +89,7 @@ class SmsSms(DomainObject):
 
 class SmsSnippet(Snippet):
     def __init__(self):
-        super(SmsSnippet, self).__init__("Snippet", "com.apple.ace.sms")
+        super(SmsSnippet, self).__init__("com.apple.ace.sms")
         self.smss = None # @"NSArray"
 
     def to_plist(self):
