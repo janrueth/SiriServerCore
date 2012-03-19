@@ -142,7 +142,7 @@ class Siri(LineReceiver):
         if cmd in (3, 4): #ping pong
             return True
         if cmd == 2:
-            return ((data + 5) < len(self.unzipped_input))
+            return (len(self.unzipped_input) >= (data + 5))
     
     def read_next_object_from_unzipped(self):
         cmd, data = struct.unpack('>BI', self.unzipped_input[:5])
