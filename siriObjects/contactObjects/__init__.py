@@ -78,11 +78,11 @@ class PersonSearchCompleted(ServerBoundCommand):
 class PersonSnippet(Snippet):
     def __init__(self, persons=None, displayProperties=None):
         super(PersonSnippet, self).__init__("com.apple.ace.contact", clazz="PersonSnippet")
-        self.person=persons if persons != None else []
+        self.persons=persons if persons != None else []
         self.displayProperties = displayProperties if displayProperties != None else []
 
     def to_plist(self):
-        self.add_property('person')
+        self.add_property('persons')
         self.add_property('displayProperties')
         return super(PersonSnippet, self).to_plist()
 
