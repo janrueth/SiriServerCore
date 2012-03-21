@@ -238,7 +238,7 @@ class SiriProtocolHandler(Siri):
             self.logger.debug("Should cancel current request")
             cancelRequest = CancelRequest(plist)
             if cancelRequest.refId in self.speech:
-                (decoder, encoder, dictation) = self.speech[finishSpeech.refId]
+                (decoder, encoder, dictation) = self.speech[cancelRequest.refId]
                 if decoder:
                     decoder.destroy()
                 if encoder:
