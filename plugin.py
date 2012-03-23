@@ -11,7 +11,7 @@ import inspect
 
 
 from siriObjects.baseObjects import ClientBoundCommand, RequestCompleted
-from siriObjects.uiObjects import AddViews, AssistantUtteranceView, OpenLink, Button
+from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, UIOpenLink, UIButton
 from siriObjects.systemObjects import GetRequestOrigin, SetRequestOrigin
 
 __criteria_key__ = "criterias"
@@ -150,16 +150,31 @@ class Plugin(threading.Thread):
                     # tell the other end that it fucked up and should enable location service
                     
                     #We need to say something
-                    view1 = AssistantUtteranceView(text=__error_location_help__[self.__lang], speakableText=__error_location_help__[self.__lang], dialogIdentifier="Common#assistantLocationServicesDisabled")
+                    view1 = UIAssistantUtteranceView()
+                    view1.text=__error_location_help__[self.__lang]
+                    view1.speakableText=__error_location_help__[self.__lang] 
+                    view1.dialogIdentifier="Common#assistantLocationServicesDisabled"
                     
                     #lets create another which has tells him to open settings
-                    view2 = AssistantUtteranceView(text=__error_location_saysettings__[self.__lang], speakableText=__error_location_saysettings__[self.__lang], dialogIdentifier="Common#assistantLocationServicesDisabled")
+                    view2 = UIAssistantUtteranceView()
+                    view2.text=__error_location_saysettings__[self.__lang]
+                    view2.speakableText=__error_location_saysettings__[self.__lang]
+                    view2.dialogIdentifier="Common#assistantLocationServicesDisabled"
+                    
+                    #create a link
+                    link = UIOpenLink()
+                    link.ref="prefs:root=LOCATION_SERVICES"
                     
                     # create a button which opens the location tab in the settings if clicked on it
-                    button = Button(text=__error_location_settings__[self.__lang], commands=[OpenLink(ref="prefs:root=LOCATION_SERVICES")])
+                    button = UIButton()
+                    button.text=__error_location_settings__[self.__lang]
+                    button.commands = [link]
                     
                     # wrap it up in a adds view
-                    self.send_object(AddViews(self.refId, views=[view1, view2, button]))
+                    addview = UIAddViews(self.refId)
+                    addview.views = [view1, view2, button]
+                    addview.dialogPhase = addview.DialogPhaseClarificationValue
+                    self.send_object(addview)
                     self.complete_request()
                     # we should definitivly kill the running plugin
                     raise StopPluginExecution("Could not get necessary location information")
@@ -184,13 +199,17 @@ class Plugin(threading.Thread):
         self.connection.current_running_plugin = None
         self.send_object(RequestCompleted(self.refId, callbacks))
 
-    def ask(self, text, speakableText=""):
+    def ask(self, text, speakableText=None):
         self._checkForCancelRequest()
         self.waitForResponse = threading.Event()
-        if speakableText == "":
+        if speakableText == None:
             speakableText = text
-        view = AddViews(self.refId)
-        view.views += [AssistantUtteranceView(text, speakableText, listenAfterSpeaking=True)]
+        view = UIAddViews(self.refId)
+        view1 = UIAssistantUtteranceView()
+        view1.text = text
+        view1.speakableText = speakableText 
+        view1.listenAfterSpeaking = True
+        view.views += [view1]
         self.send_object(view)
         self.waitForResponse.wait()
         self._checkForCancelRequest()
@@ -216,12 +235,15 @@ class Plugin(threading.Thread):
         else:
             self.send_plist(clientBoundCommand)
 
-    def say(self, text, speakableText=""):
+    def say(self, text, speakableText=None):
         self._checkForCancelRequest()
-        view = AddViews(self.refId)
-        if speakableText == "":
+        view = UIAddViews(self.refId)
+        if speakableText == None:
             speakableText = text
-        view.views += [AssistantUtteranceView(text, speakableText)]
+        view1 = UIAssistantUtteranceView()
+        view1.text = text
+        view1.speakableText = speakableText
+        view.views += []
         self.send_object(view)
         
     def user_name(self):
