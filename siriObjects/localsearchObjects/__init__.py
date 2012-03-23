@@ -1,10 +1,10 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject, Location
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
-class MapItemSnippet(Snippet):
+class MapItemSnippet(UISnippet):
     def __init__(self, userCurrentLocation=True, items=None):
-        super(MapItemSnippet, self).__init__("com.apple.ace.localsearch", clazz="MapItemSnippet")
+        super(MapItemSnippet, self).__init__("MapItemSnippet", "com.apple.ace.localsearch")
         self.userCurrentLocation = userCurrentLocation
         self.items = items
         self.searchRegionCenter = None # systemObjects.Location
@@ -98,9 +98,9 @@ class Business(AceObject):
         self.add_property('businessId')
         return super(Business, self).to_plist()
 
-class DisambiguationMap(Snippet):
+class DisambiguationMap(UISnippet):
     def __init__(self, items=None):
-        super(DisambiguationMap, self).__init__("com.apple.ace.localsearch", clazz="DisambiguationMap")
+        super(DisambiguationMap, self).__init__("DisambiguationMap", "com.apple.ace.localsearch")
         self.items = items if items != None else []
 
     def to_plist(self):
