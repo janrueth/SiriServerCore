@@ -1,7 +1,7 @@
 from siriObjects.baseObjects import AceObject, ClientBoundCommand, \
     ServerBoundCommand
 from siriObjects.systemObjects import Location, DomainObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class WeatherBarometricPressure(AceObject):
@@ -154,9 +154,9 @@ class WeatherDailyForecast(WeatherForecast):
         self.add_property('lowTemperature')
         return super(WeatherDailyForecast, self).to_plist()
 
-class WeatherForecastSnippet(Snippet):
+class WeatherForecastSnippet(UISnippet):
     def __init__(self):
-        super(WeatherForecastSnippet, self).__init__("com.apple.ace.weather", clazz="ForecastSnippet")
+        super(WeatherForecastSnippet, self).__init__("ForecastSnippet", "com.apple.ace.weather")
         self.aceWeathers = None # @"NSArray"
 
     def to_plist(self):
@@ -187,7 +187,6 @@ class WeatherLocationAdd(ClientBoundCommand):
         self.targetAppId = None # @"NSURL"
         self.weatherLocation = None # @"WeatherLocation"
 
-
     def to_plist(self):
         self.add_property('targetAppId')
         self.add_property('weatherLocation')
@@ -209,7 +208,6 @@ class WeatherLocationDelete(ClientBoundCommand):
         super(WeatherLocationDelete, self).__init__("LocationDelete", "com.apple.ace.weather", None, refId)
         self.targetAppId = None # @"NSURL"
         self.weatherLocation = None # @"WeatherLocation"
-
 
     def to_plist(self):
         self.add_property('targetAppId')
@@ -244,9 +242,9 @@ class WeatherLocationSearchCompleted(ServerBoundCommand):
         self.weatherLocations = None # @"NSArray"
         super(WeatherLocationSearchCompleted, self).__init__(plist)
 
-class WeatherLocationSnippet(Snippet):
+class WeatherLocationSnippet(UISnippet):
     def __init__(self):
-        super(WeatherLocationSnippet, self).__init__("com.apple.ace.weather", clazz="LocationSnippet")
+        super(WeatherLocationSnippet, self).__init__("LocationSnippet", "com.apple.ace.weather")
         self.weatherLocations = None # @"NSArray"
 
     def to_plist(self):
