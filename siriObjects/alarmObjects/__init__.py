@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand, AceObject
 from siriObjects.systemObjects import DomainObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class AlarmObject(DomainObject):
@@ -87,9 +87,9 @@ class AlarmSearchCompleted(ServerBoundCommand):
         super(AlarmSearchCompleted, self).__init__(plist)
 
 
-class AlarmSnippet(Snippet):                
+class AlarmSnippet(UISnippet):                
     def __init__(self, alarms = None):
-        super(AlarmSnippet, self).__init__("com.apple.ace.alarm")
+        super(AlarmSnippet, self).__init__(group="com.apple.ace.alarm")
         self.alarms = alarms if alarms != None else []
     
     def to_plist(self):
