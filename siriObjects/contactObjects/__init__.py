@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject, Location, Person as SuperPerson, RelatedName as SuperRelatedName, Phone as SuperPhone, Email as SuperEmail
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 class Address(Location):
     def __init__(self, label="", street="", city="", stateCode="", countryCode="", postalCode="", latitude=0, longitude=0, accuracy=0):
@@ -75,9 +75,9 @@ class PersonSearchCompleted(ServerBoundCommand):
         self.results = None #array
         super(PersonSearchCompleted, self).__init__(plist)
 
-class PersonSnippet(Snippet):
+class PersonSnippet(UISnippet):
     def __init__(self, persons=None, displayProperties=None):
-        super(PersonSnippet, self).__init__("com.apple.ace.contact", clazz="PersonSnippet")
+        super(PersonSnippet, self).__init__("PersonSnippet", "com.apple.ace.contact")
         self.persons=persons if persons != None else []
         self.displayProperties = displayProperties if displayProperties != None else []
 
