@@ -1,5 +1,5 @@
 from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand, AceObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 from siriObjects.systemObjects import DomainObject
 
 
@@ -232,9 +232,9 @@ class ReminderSmsPayload(ReminderPayload):
         self.add_property('message')
         return super(ReminderSmsPayload, self).to_plist()
          
-class ReminderSnippet(Snippet):
+class ReminderSnippet(UISnippet):
     def __init__(self):
-        super(ReminderSnippet, self).__init__("com.apple.ace.reminder")
+        super(ReminderSnippet, self).__init__(group="com.apple.ace.reminder")
         self.reminders = None # array
     
     def to_plist(self):
