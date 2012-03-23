@@ -1,5 +1,8 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject
 
+
+# todo rework this one
+
 class NoteSnippet(AceObject):
     def __init__(self, notes=None, temporary=False, dialogPhase="Summary"):
         super(NoteSnippet, self).__init__("Snippet", "com.apple.ace.note")
