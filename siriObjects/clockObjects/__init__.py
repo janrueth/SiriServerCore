@@ -1,5 +1,5 @@
 from siriObjects.baseObjects import AceObject, ClientBoundCommand, ServerBoundCommand
-from siriObjects.uiObjects import AddViews, AssistantUtteranceView, Snippet
+from siriObjects.uiObjects import UISnippet
 from siriObjects.systemObjects import DomainObject
 
 
@@ -75,9 +75,9 @@ class ClockSearch(ClientBoundCommand):
         self.add_property('unlocalizedCountryName')
         self.add_property('unlocalizedCityName')
         self.add_property('identifier')
-    	self.add_property('countryCode')
+        self.add_property('countryCode')
         self.add_property('alCityId')
-    	self.add_property('targetAppId')
+        self.add_property('targetAppId')
         return super(ClockSearch, self).to_plist()
 
 class ClockSearchCompleted(ServerBoundCommand):
@@ -87,9 +87,9 @@ class ClockSearchCompleted(ServerBoundCommand):
         self.results = None # array
         super(ClockSearchCompleted, self).__init__(plist)
     
-class ClockSnippet(Snippet):
+class ClockSnippet(UISnippet):
     def __init__(self, clocks=None):
-        super(ClockSnippet, self).__init__("com.apple.ace.clock")
+        super(ClockSnippet, self).__init__(group="com.apple.ace.clock")
         self.clocks = clocks if clocks != None else []
     
     def to_plist(self):
