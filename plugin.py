@@ -209,7 +209,7 @@ class Plugin(threading.Thread):
         view1.text = text
         view1.speakableText = speakableText 
         view1.listenAfterSpeaking = True
-        view.views += [view1]
+        view.views = [view1]
         self.send_object(view)
         self.waitForResponse.wait()
         self._checkForCancelRequest()
@@ -243,7 +243,7 @@ class Plugin(threading.Thread):
         view1 = UIAssistantUtteranceView()
         view1.text = text
         view1.speakableText = speakableText
-        view.views += []
+        view.views = [view1]
         self.send_object(view)
         
     def user_name(self):
