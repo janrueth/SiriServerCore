@@ -1,5 +1,7 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject
 
+#todo rework this
+
 class EventSearch(ClientBoundCommand):
     def __init__(self, refId, timeZoneId="America/Chicago", startDate=None, endDate=None, limit=10, identifier=""):
         super(EventSearch, self).__init__("EventSearch", "com.apple.ace.calendar", None, refId)
