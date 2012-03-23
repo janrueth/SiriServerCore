@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class SmsRecipientSearch(ClientBoundCommand):
@@ -83,9 +83,9 @@ class SmsSms(DomainObject):
         self.add_property('timezoneId')
         return super(SmsSms, self).to_plist()
 
-class SmsSnippet(Snippet):
+class SmsSnippet(UISnippet):
     def __init__(self):
-        super(SmsSnippet, self).__init__("com.apple.ace.sms")
+        super(SmsSnippet, self).__init__(group="com.apple.ace.sms")
         self.smss = None # @"NSArray"
 
     def to_plist(self):
