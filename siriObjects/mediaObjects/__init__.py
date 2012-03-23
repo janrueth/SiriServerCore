@@ -1,7 +1,7 @@
 from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand, \
 AceObject
 from siriObjects.systemObjects import DomainObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class MPMediaEntity(DomainObject):
@@ -263,9 +263,9 @@ class MPSetState(ClientBoundCommand):
         self.add_property('state')
         return super(MPSetState, self).to_plist()
 
-class MPSnippet(Snippet):
+class MPSnippet(UISnippet):
     def __init__(self):
-        super(MPSnippet, self).__init__("com.apple.ace.media")
+        super(MPSnippet, self).__init__(group="com.apple.ace.media")
         self.items = None # @"NSArray"
 
     def to_plist(self):
