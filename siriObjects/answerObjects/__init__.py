@@ -1,10 +1,10 @@
 from siriObjects.baseObjects import AceObject, ClientBoundCommand
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 from siriObjects.systemObjects import DomainObject
 
-class AnswerSnippet(Snippet):
+class AnswerSnippet(UISnippet):
     def __init__(self, answers=None):
-        super(AnswerSnippet, self).__init__("com.apple.ace.answer")
+        super(AnswerSnippet, self).__init__(group="com.apple.ace.answer")
         self.answers = answers if answers != None else []
 
     def to_plist(self):
