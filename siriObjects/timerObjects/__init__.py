@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCommand
 from siriObjects.systemObjects import SendCommands, StartRequest, DomainObject
-from siriObjects.uiObjects import ConfirmationOptions, Snippet
+from siriObjects.uiObjects import ConfirmationOptions, UISnippet
 
 class TimerGet(ClientBoundCommand):
     def __init__(self, refId):
@@ -75,9 +75,9 @@ class TimerResumeCompleted(ServerBoundCommand):
     def __init__(self, plist):
         super(TimerResumeCompleted, self).__init__(plist)
 
-class TimerSnippet(Snippet):                
+class TimerSnippet(UISnippet):                
     def __init__(self, timers = None, confirm = False):
-        super(TimerSnippet, self).__init__("com.apple.ace.timer")
+        super(TimerSnippet, self).__init__(group="com.apple.ace.timer")
         self.timers = timers if timers != None else []
         if confirm:
             self.confirmationOptions = ConfirmationOptions(
