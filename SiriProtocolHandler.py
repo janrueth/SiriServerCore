@@ -125,7 +125,7 @@ class SiriProtocolHandler(Siri):
                         errorView = UIAssistantUtteranceView()
                         errorView.text = errorText.format(best_match)
                         errorView.speakableText = errorText.format(best_match)
-                        view.views += [errorView]
+                        view.views = [errorView]
                         websearchText = SiriProtocolHandler.__websearch[self.assistant.language] if self.assistant.language in SiriProtocolHandler.__websearch else SiriProtocolHandler.__websearch["en-US"]
                         button = UIButton()
                         button.text = websearchText
