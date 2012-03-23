@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject, PersonAttribute
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class PhoneCall(ClientBoundCommand):
@@ -20,9 +20,9 @@ class PhoneCall(ClientBoundCommand):
 
 
 
-class PhoneCallSnippet(Snippet):
+class PhoneCallSnippet(UISnippet):
     def __init__(self, calls=None):
-        super(PhoneCallSnippet, self).__init__("com.apple.ace.phone", clazz="CallSnippet")
+        super(PhoneCallSnippet, self).__init__("CallSnippet", "com.apple.ace.phone")
         self.calls = calls if calls != None else []
     
     def to_plist(self):
