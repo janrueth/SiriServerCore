@@ -1,6 +1,6 @@
 from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject
-from siriObjects.uiObjects import Snippet
+from siriObjects.uiObjects import UISnippet
 
 
 class StockAdd(ClientBoundCommand):
@@ -11,7 +11,7 @@ class StockAdd(ClientBoundCommand):
         self.stockReferences = None # @"NSArray"
         self.stocks = None # @"NSArray"
         self.tickerSymbol = None # @"NSString"
-
+    
     def to_plist(self):
         self.add_property('targetAppId')
         self.add_property('companyName')
@@ -203,9 +203,9 @@ class StockSearchCompleted(ServerBoundCommand):
         self.stockReferences = None # @"NSArray"
         super(StockSearchCompleted, self).__init__(plist)
 
-class StockSnippet(Snippet):
+class StockSnippet(UISnippet):
     def __init__(self):
-        super(StockSnippet, self).__init__("com.apple.ace.stock", clazz="Snippet")
+        super(StockSnippet, self).__init__(group="com.apple.ace.stock")
         self.stocks = None # @"NSArray"
 
     def to_plist(self):
