@@ -2,6 +2,19 @@ from siriObjects.baseObjects import ClientBoundCommand, AceObject, ServerBoundCo
 
 import biplist, struct
 
+class AceView(AceObject):
+    def __init__(self, clazz="AceView", group="com.apple.ace.system"):
+        super(AceView, self).__init__(clazz, group)
+        self.listenAfterSpeaking = None # @"NSNumber"
+        self.speakableText = None # @"NSString"
+        self.viewId = None # @"NSString"
+
+    def to_plist(self):
+        self.add_property('listenAfterSpeaking')
+        self.add_property('speakableText')
+        self.add_property('viewId')
+        return super(AceView, self).to_plist()
+
 class GetRequestOrigin(ClientBoundCommand):
     desiredAccuracyThreeKilometers = "ThreeKilometers"
     desiredAccuracyKilometer = "Kilometer"
