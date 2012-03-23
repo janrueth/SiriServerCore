@@ -1,6 +1,6 @@
-from siriObjects.baseObjects import AceObject, ClientBoundCommand, ServerBoundCommand
-from siriObjects.uiObjects import AddViews, AssistantUtteranceView, Snippet
+from siriObjects.baseObjects import ClientBoundCommand, ServerBoundCommand
 from siriObjects.systemObjects import DomainObject
+from siriObjects.uiObjects import UISnippet
 
 
 class EmailEmail(DomainObject):
@@ -85,9 +85,9 @@ class EmailSearchCompleted(ServerBoundCommand):
         self.emailResults = None #array
         super(EmailSearchCompleted, self).__init__(plist)
 
-class EmailSnippet(Snippet):
+class EmailSnippet(UISnippet):
     def __init__(self):
-        super(EmailSnippet, self).__init__("com.apple.ace.email")
+        super(EmailSnippet, self).__init__(group="com.apple.ace.email")
         self.emails = None # array
 
     def to_plist(self):
