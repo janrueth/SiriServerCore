@@ -22,10 +22,20 @@ class startRequestHandler(Plugin):
         
         lang = language.split("-")[0]
 
-        resultCallback1View = AddViews(refId="", views=[AssistantUtteranceView(dialogIdentifier="WebSearch#initiateWebSearch", text=webSearchAnswerText[lang].format(u"„{0}“".format(webSearchQuery)), speakableText=webSearchAnswerText[lang].format(webSearchQuery))])
+        resultCallback1View = UIAddViews(refId="")
+        resultCallback1ViewView = UIAssistantUtteranceView()
+        resultCallback1ViewView.dialogIdentifier="WebSearch#initiateWebSearch"
+        resultCallback1ViewView.text=webSearchAnswerText[lang].format(u"„{0}“".format(webSearchQuery))
+        resultCallback1ViewView.speakableText=webSearchAnswerText[lang].format(webSearchQuery)
+        resultCallback1View.views = [resultCallback1ViewView]
         
         search = WebSearch(refId="", aceId="", query=webSearchQuery)
-        resultCallback3View = AddViews(refId="", views=[AssistantUtteranceView(dialogIdentifier="WebSearch#fatalResponse", text=webSearchAnswerFailureText[lang], speakableText=webSearchAnswerFailureText[lang])])
+        resultCallback3View = UIAddViews(refId="")
+        resultCallback3ViewView = UIAssistantUtteranceView()
+        resultCallback3ViewView.dialogIdentifier="WebSearch#fatalResponse"
+        resultCallback3ViewView.text=webSearchAnswerFailureText[lang]
+        resultCallback3ViewView.speakableText=webSearchAnswerFailureText[lang]
+        resultCallback3View.views=[resultCallback3ViewView]
         resultCallback3 = ResultCallback(commands=[resultCallback3View])
         search.callbacks = [resultCallback3]
 
