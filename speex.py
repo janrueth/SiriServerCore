@@ -82,6 +82,12 @@ class SpeexBits(Structure):
 
 
 class Decoder:
+    
+    def __init__(self):
+        self.state = None
+        self.frame_size = None
+        self.bits = None
+        
     def initialize(self, mode=SPEEX_MODEID_UWB):
         libspeex.speex_decoder_init.restype = c_void_p
         libspeex.speex_decoder_init.argtypes = [c_void_p]
@@ -113,5 +119,7 @@ class Decoder:
         return out
 
     def destroy(self):
-        libspeex.speex_bits_destroy(byref(self.bits))
-        libspeex.speex_decoder_destroy(self.state)
+        if self.state:
+            libspeex.speex_bits_destroy(byref(self.bits))
+            libspeex.speex_decoder_destroy(self.state)
+            self.state = None
