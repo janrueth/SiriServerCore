@@ -223,16 +223,20 @@ class SiriProtocolHandler(Siri):
                 (decoder, encoder, dictation) = self.speech[finishSpeech.refId]
                 if decoder:
                     decoder.destroy()
-                encoder.finish()
-                flacBin = encoder.getBinary()
-                encoder.destroy()
+                flacBin = None
+                if encoder:
+                    encoder.finish()
+                    flacBin = encoder.getBinary()
+                    encoder.destroy()
                 del self.speech[finishSpeech.refId]
-                
-                self.logger.info("Sending flac to google for recognition")
-                try:
-                    self.current_google_request = self.httpClient.make_google_request(flacBin, finishSpeech.refId, dictation, language=self.assistant.language, allowCurses=True)
-                except (AttributeError, TypeError):
-                    self.logger.warning("Unable to find language record for this assistant. Try turning Siri off and then back on.")
+                if flacBin != None:
+                    self.logger.info("Sending flac to google for recognition")
+                    try:
+                        self.current_google_request = self.httpClient.make_google_request(flacBin, finishSpeech.refId, dictation, language=self.assistant.language, allowCurses=True)
+                    except (AttributeError, TypeError):
+                        self.logger.warning("Unable to find language record for this assistant. Try turning Siri off and then back on.")
+                else:
+                    self.logger.info("There was no speech")
             else:
                 self.logger.debug("Got a finish speech packet that did not match any current request")
                 
