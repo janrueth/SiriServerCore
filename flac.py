@@ -1,9 +1,9 @@
 from ctypes import *
 import ctypes.util
 import math
+import os
 import struct
 import tempfile
-import os
 
 libflac_name = ctypes.util.find_library('FLAC')
 if libflac_name == None:
@@ -20,6 +20,11 @@ def writeCallBack(encoder, buf, numBytes, samples, current_frame, client_data):
 
 
 class Encoder:
+    
+    def __init__(self):
+        self.encoder = None
+        self.output = None
+        self.filename = None
 
     
     def initialize(self, sample_rate, channels, bps):
@@ -102,8 +107,11 @@ class Encoder:
         return flac
         
     def finish(self):
-        libflac.FLAC__stream_encoder_finish(self.encoder)
+        if self.encoder:
+            libflac.FLAC__stream_encoder_finish(self.encoder)
     
     def destroy(self):
-        libflac.FLAC__stream_encoder_delete(self.encoder)
-        os.unlink(self.filename)
+        if self.encoder:
+            libflac.FLAC__stream_encoder_delete(self.encoder)
+            os.unlink(self.filename)
+            self.encoder = None
