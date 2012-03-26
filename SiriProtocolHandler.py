@@ -11,7 +11,7 @@ from siriObjects.speechObjects import Phrase, Recognition, SpeechRecognized, \
     StartSpeechDictation, FinishSpeech, SpeechPacket
 from siriObjects.systemObjects import StartRequest, SendCommands, CancelRequest, \
     CancelSucceeded, GetSessionCertificate, GetSessionCertificateResponse, \
-    CreateSessionInfoRequest, CommandFailed
+    CreateSessionInfoRequest, CommandFailed, RollbackRequest
 from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, UIButton
 import PluginManager
 import flac
@@ -20,8 +20,8 @@ import pprint
 import speex
 import sqlite3
 import time
-import uuid
 import twisted
+import uuid
 
        
 
@@ -267,6 +267,9 @@ class SiriProtocolHandler(Siri):
                     self.current_running_plugin._abortPluginRun()     
             
             self.send_object(CancelSucceeded(cancelRequest.aceId))
+            
+        elif ObjectIsCommand(plist, RollbackRequest):
+            pass
 
         elif ObjectIsCommand(plist, GetSessionCertificate):
             getSessionCertificate = GetSessionCertificate(plist)
