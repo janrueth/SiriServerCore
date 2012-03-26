@@ -7,7 +7,19 @@ class AceObject(object):
         self.groupId = groupIdentifier
         self.plist = dict()
         self.properties = dict()
-    
+        
+    def initializeFromPlist(self, plist):
+        if 'properties' in plist:
+            for key in plist['properties'].keys():
+                if type(plist['properties'][key]) == list:
+                    setattr(self, key, AceObject.list_from_plist_list(plist['properties'][key]))
+                elif type(plist['properties'][key]) == dict: #unwrap 
+                    setattr(self, key, ServerBoundCommand(plist['properties'][key]))
+                else:
+                    try:
+                        setattr(self, key, plist['properties'][key])
+                    except:
+                        pass
     def add_item(self, name):
         try:
             if getattr(self, name) != None and getattr(self, name) != "":
@@ -86,19 +98,19 @@ class AceObject(object):
 
     def from_plist(self):
         # get basic properties
-        self.groupId = self.plist['group']
-        self.className = self.plist['class']
+        self.groupId = self.plist['group'] if 'group' in self.plist else self.groupIdentifier if hasattr(self, 'groupIdentifier') else ""
+        self.className = self.plist['class'] if 'class' in self.plist else self.classIdentifier if hasattr(self, 'classIdentifier') else ""
         self.properties = self.plist['properties'] if 'properties' in self.plist else dict()
         
         #expand properties to
         for key in self.properties.keys():
             if type(self.properties[key]) == list:
-                setattr(self, key, AceObject.list_from_plist_list(self.properties[key]))
+                self.__setattr__(key, AceObject.list_from_plist_list(self.properties[key]))
             elif type(self.properties[key]) == dict: #unwrap 
-                setattr(self, key, ServerBoundCommand(self.properties[key]))
+                self.__setattr__(key, ServerBoundCommand(self.properties[key]))
             else:
                 try:
-                    setattr(self, key, self.properties[key])
+                    self.__setattr__(key, self.properties[key])
                 except:
                     pass
 
