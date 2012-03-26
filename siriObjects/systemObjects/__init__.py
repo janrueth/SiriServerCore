@@ -394,4 +394,19 @@ class Email(AceObject):
         self.add_property('favoriteFacetime')
         self.add_property('emailAddress')
         return super(Email, self).to_plist()
+    
+    
+class RollbackRequest(ServerBoundCommand):
+        classIdentifier = "RollbackRequest"
+        groupIdentifier = "com.apple.ace.system"
+        def __init__(self, plist):
+            self.requestId = None # @"NSString"
+            super(RollbackRequest, self).__init__(plist)
+
+class RollbackSucceeded(ClientBoundCommand):
+        def __init__(self, refId):
+            super(RollbackSucceeded, self).__init__("RollbackSucceeded", "com.apple.ace.system", None, refId)
+    
+        def to_plist(self):
+            return super(RollbackSucceeded, self).to_plist()
 
