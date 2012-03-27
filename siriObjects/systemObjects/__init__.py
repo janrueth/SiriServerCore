@@ -261,7 +261,7 @@ class PersonAttribute(AceObject):
         return super(PersonAttribute, self).to_plist()
 
 class Phone(AceObject):
-    def __init__(self, number="", label="", favoriteVoice=0, favoriteFacetime=0, group="com.apple.ace.system"):
+    def __init__(self, number=None, label=None, favoriteVoice=None, favoriteFacetime=None, group="com.apple.ace.system"):
         super(Phone, self).__init__("Phone", group)
         self.number = number
         self.label = label
@@ -277,7 +277,7 @@ class Phone(AceObject):
 
 
 class RelatedName(AceObject):
-    def __init__(self, name="", label="", group="com.apple.ace.system"):
+    def __init__(self, name=None, label=None, group="com.apple.ace.system"):
         super(RelatedName, self).__init__("RelatedName", group)
         self.name = name
         self.label = label
@@ -357,7 +357,7 @@ class Location(DomainObject):
     AccuracyHundredMetersValue = "HundredMeters"
     AccuracyKilometerValue = "Kilometer"
     AccuracyThreeKilometersValue = "ThreeKilometers"
-    def __init__(self, label="", street="", city="", stateCode="", countryCode="", postalCode="", latitude=0, longitude=0, accuracy=0, group="com.apple.ace.system", clazz="Location"):
+    def __init__(self, label=None, street=None, city=None, stateCode=None, countryCode=None, postalCode=None, latitude=None, longitude=None, accuracy=None, group="com.apple.ace.system", clazz="Location"):
         super(Location, self).__init__(group, None, clazz)
         self.label = label
         self.street = street
