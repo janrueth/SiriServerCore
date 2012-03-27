@@ -81,6 +81,13 @@ class SiriProtocolHandler(Siri):
         self.current_google_request = None
         if (body != None):
             googleAnswer = json.loads(body)
+            for i in xrange(0,len(googleAnswer['hypotheses'])-1):
+                utterance = googleAnswer['hypotheses'][i]['utterance']
+                if len(utterance) == 1:
+                    utterance = utterance.upper()
+                else:
+                    utterance = utterance[0].upper() + utterance[1:]
+                googleAnswer['hypotheses'][i]['utterance'] = utterance
             self.process_recognized_speech(googleAnswer, requestId, dictation)
         else:
             self.send_object(SpeechFailure(requestId, "No connection to Google possible"))
@@ -96,10 +103,6 @@ class SiriProtocolHandler(Siri):
         possible_matches = googleJson['hypotheses']
         if len(possible_matches) > 0:
             best_match = possible_matches[0]['utterance']
-            if len(best_match) == 1:
-                best_match = best_match.upper()
-            else:
-                best_match = best_match[0].upper() + best_match[1:]
             best_match_confidence = possible_matches[0]['confidence']
             self.logger.info(u"Best matching result: \"{0}\" with a confidence of {1}%".format(best_match, round(float(best_match_confidence) * 100, 2)))
             # construct a SpeechRecognized
