@@ -5,6 +5,7 @@ from siriObjects.uiObjects import UISnippet
 
 
 class WeatherBarometricPressure(AceObject):
+    TrendSteadyValue = "Steady"
     TrendRisingValue = "Rising"
     TrendFallingValue = "Falling"
     def __init__(self):
