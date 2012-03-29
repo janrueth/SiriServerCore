@@ -162,7 +162,7 @@ class Plugin(threading.Thread):
                     view2.dialogIdentifier="Common#assistantLocationServicesDisabled"
                     
                     #create a link
-                    link = UIOpenLink()
+                    link = UIOpenLink("")
                     link.ref="prefs:root=LOCATION_SERVICES"
                     
                     # create a button which opens the location tab in the settings if clicked on it
