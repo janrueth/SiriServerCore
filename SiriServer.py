@@ -1,5 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from SiriProtocolHandler import SiriProtocolHandler
+from optparse import OptionParser
+from os.path import exists
+from socket import gethostname
+from twisted.internet.protocol import Protocol
+import PluginManager
+import db
+import logging
+import sys
 
 
 try:    
@@ -12,14 +21,6 @@ except ImportError:
     print "Please refer to the website listed above for further installation instructions\n"
     exit(-1)
     
-from SiriProtocolHandler import SiriProtocolHandler
-from optparse import OptionParser
-from os.path import exists
-from socket import gethostname
-import PluginManager
-import db
-import logging
-import sys
     
 try:       
     from OpenSSL import crypto
@@ -39,17 +40,28 @@ log_levels = {'debug':logging.DEBUG,
               'critical':logging.CRITICAL
               }
        
+class RejectHandler(Protocol):
+    def makeConnection(self, transport):
+        transport.loseConnection()
+        return
+    
 
 class SiriFactory(Factory):
 
-    def __init__(self):
+    def __init__(self, maxConnections):
         self.numberOfConnections = 0
+        self.maxConnections = maxConnections
         self.sessionCert = None
         self.sessionCACert = None
         self.dbConnection = None
         
     def buildProtocol(self, addr):
-        return SiriProtocolHandler(self, addr)
+        if self.maxConnections == None:
+            return SiriProtocolHandler(self, addr)
+        elif self.numberOfConnections < self.maxConnections:
+            return SiriProtocolHandler(self, addr)
+        else:
+            return RejectHandler()
     
     def startFactory(self):
         logging.getLogger().info("Loading Session Certificates")
@@ -192,6 +204,7 @@ def main():
     parser.add_option('-l', '--loglevel', default='info', dest='logLevel', help='This sets the logging level you have these options: debug, info, warning, error, critical \t\tThe standard value is info')
     parser.add_option('-p', '--port', default=4443, type='int', dest='port', help='This options lets you use a custom port instead of 443 (use a port > 1024 to run as non root user)')
     parser.add_option('--logfile', default=None, dest='logfile', help='Log to a file instead of stdout.')
+    parser.add_option('-m', '--maxConnections', default=None, type='int', dest='maxConnections', help='You can limit the number of maximum simultaneous connections with that switch')
     (options, _) = parser.parse_args()
     
     x = logging.getLogger()
@@ -224,7 +237,7 @@ def main():
 
     
     x.info("Starting server on port {0}".format(options.port))
-    reactor.listenSSL(options.port, SiriFactory(), ssl.DefaultOpenSSLContextFactory(SERVER_KEY_FILE, SERVER_CERT_FILE))
+    reactor.listenSSL(options.port, SiriFactory(options.maxConnections), ssl.DefaultOpenSSLContextFactory(SERVER_KEY_FILE, SERVER_CERT_FILE))
     reactor.run()
     x.info("Server shutdown complete")
     
