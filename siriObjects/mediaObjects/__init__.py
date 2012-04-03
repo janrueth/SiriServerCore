@@ -107,22 +107,22 @@ class MPGetStateResponse(ServerBoundCommand):
     def __init__(self, plist):
         self.listeningToItem = None # @"MediaItem"
         self.listeningToMusicApplication = None # @"NSNumber"
-        self.state = None # i
+        self.state = None # NSString
         super(MPGetStateResponse, self).__init__(plist)
 
 class MPLoadPredefinedQueue(ClientBoundCommand):
-    MPTypePlaylistValue = 1
-    MPTypePodcastValue = 2
-    MPTypeSongValue = 3
-    MPTypeGeniusMixValue = 4
-    MPTypeVideoValue = 5
-    MPTypeITunesUValue = 6
-    MPTypeAudioBookValue = 7
-    MPTypeTVShowValue = 8
+    MPTypePlaylistValue = "Playlist"
+    MPTypePodcastValue = "Podcast"
+    MPTypeSongValue = "Song"
+    MPTypeGeniusMixValue = "GeniusMix"
+    MPTypeVideoValue = "Video"
+    MPTypeITunesUValue = "ITunesU"
+    MPTypeAudioBookValue = "AudioBook"
+    MPTypeTVShowValue = "TVShow"
     def __init__(self, refId):
         super(MPLoadPredefinedQueue, self).__init__("LoadPredefinedQueue", "com.apple.ace.media", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.mediaItemType = None # i
+        self.mediaItemType = None # NSString
 
     def to_plist(self):
         self.add_property('targetAppId')
@@ -168,11 +168,11 @@ class MPPodcast(MPMediaItem):
         return super(MPPodcast, self).to_plist()
 
 class MPSearch(ClientBoundCommand):
-    MPSearchPropertyAlbumValue = 1
-    MPSearchPropertyArtistValue = 2
-    MPSearchPropertyComposerValue = 3
-    MPSearchPropertyGenreValue = 4
-    MPSearchPropertyTitleValue = 5
+    MPSearchPropertyAlbumValue = "Album"
+    MPSearchPropertyArtistValue = "Artist"
+    MPSearchPropertyComposerValue = "Composer"
+    MPSearchPropertyGenreValue = "Genre"
+    MPSearchPropertyTitleValue = "Title"
     def __init__(self, refId):
         super(MPSearch, self).__init__("Search", "com.apple.ace.media", None, refId)
         self.targetAppId = None # @"NSURL"
@@ -224,13 +224,13 @@ class MPSetOutputSource(ClientBoundCommand):
         return super(MPSetOutputSource, self).to_plist()
 
 class MPSetPlaybackPosition(ClientBoundCommand):
-    MPPlaybackPositionNextItemValue = 1
-    MPPlaybackPositionPreviousItemValue = 2
-    MPPlaybackPositionBeginningValue = 3
+    MPPlaybackPositionNextItemValue = "NextItem"
+    MPPlaybackPositionPreviousItemValue = "PreviousItem"
+    MPPlaybackPositionBeginningValue = "Beginning"
     def __init__(self, refId):
         super(MPSetPlaybackPosition, self).__init__("SetPlaybackPosition", "com.apple.ace.media", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.position = None # i
+        self.position = None # NSString
 
     def to_plist(self):
         self.add_property('targetAppId')
@@ -249,14 +249,14 @@ class MPSetQueue(ClientBoundCommand):
         return super(MPSetQueue, self).to_plist()
 
 class MPSetState(ClientBoundCommand):
-    MPPlayStatePlayingValue = 1
-    MPPlayStatePausedValue = 2
-    MPPlayStateStoppedValue = 3
-    MPPlayStateInterruptedValue = 4
+    MPPlayStatePlayingValue = "Playing"
+    MPPlayStatePausedValue = "Paused"
+    MPPlayStateStoppedValue = "Stopped"
+    MPPlayStateInterruptedValue = "Interrupted"
     def __init__(self, refId):
         super(MPSetState, self).__init__("SetState", "com.apple.ace.media", None, refId)
         self.targetAppId = None # @"NSURL"
-        self.state = None # i
+        self.state = None # NSString
 
     def to_plist(self):
         self.add_property('targetAppId')
