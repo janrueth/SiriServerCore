@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from siriObjects.systemObjects import SetAssistantData
 from uuid import uuid4
 import cPickle
 import logging
@@ -26,14 +27,9 @@ def getConnection():
         logging.getLogger().error(e)
     return None
 
-class Assistant(object):
+class Assistant(SetAssistantData):
     def __init__(self):
         self.assistantId = None
-        self.speechId= None    
-        self.censorSpeech = None
-        self.timeZoneId = None
-        self.language = None
-        self.region = None
         self.nickName = u''
         self.firstName=u''
 
