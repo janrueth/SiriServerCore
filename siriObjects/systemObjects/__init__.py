@@ -125,6 +125,11 @@ class CommandFailed(BaseCommand):
         self.errorCode = None # i
         self.reason = None # @"NSString"
         super(CommandFailed, self).__init__(clazz=CommandFailed.classIdentifier, group=CommandFailed.groupIdentifier, aceId=None, refId=refId, plist=plist)
+        
+    def to_plist(self):
+        self.add_property("errorCode")
+        self.add_property("reason")
+        return super(CommandFailed, self).to_plist()
     
 
 class CommandIgnored(ServerBoundCommand):
