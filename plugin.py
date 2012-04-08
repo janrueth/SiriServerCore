@@ -3,16 +3,19 @@
 
 
 
+from siriObjects.baseObjects import ClientBoundCommand, RequestCompleted
+from siriObjects.systemObjects import GetRequestOrigin, SetRequestOrigin
+from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, \
+    UIOpenLink, UIButton
+import PluginManager
+import contextlib
+import inspect
+import logging
 import re
 import threading
-import logging
-import PluginManager
-import inspect
+import urllib2
 
 
-from siriObjects.baseObjects import ClientBoundCommand, RequestCompleted
-from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, UIOpenLink, UIButton
-from siriObjects.systemObjects import GetRequestOrigin, SetRequestOrigin
 
 __criteria_key__ = "criterias"
 
@@ -59,6 +62,21 @@ def APIKeyForAPI(apiName):
     if apiKey == None or apiKey == "":
         raise ApiKeyNotFoundException("Could not find API key for: "+ apiName + ". Please check your " + PluginManager.__apikeys_file__)
     return apiKey
+
+
+def getWebsite(url, timeout=5):
+    '''
+        This method retrieved the website at the url encoded url
+        if this method fails to retrieve the website with the given timeout
+        or anything else, None is returned
+    '''
+    try:
+        with contextlib.closing(urllib2.urlopen(url, timeout=timeout)) as page:
+            body = page.read()
+            return body
+    except:
+        pass
+    return None
 
 class Plugin(threading.Thread):
     def __init__(self):
