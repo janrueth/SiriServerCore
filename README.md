@@ -51,6 +51,7 @@ and compile and install them, or simply follow the following steps:
 	
 	wget http://sourceforge.net/projects/flac/files/flac-src/flac-1.2.1-src/flac-1.2.1.tar.gz/download -O flac-1.2.1.tar.gz
 	tar -xf flac-1.2.1.tar.gz
+	cd flac-1.2.1
 	./configure --disable-asm-optimizations
 	make
 	sudo make install
