@@ -147,7 +147,7 @@ class RequestCompleted(ClientBoundCommand):
 
 def ObjectIsCommand(obj, command):
     try:
-        if issubclass(command, ServerBoundCommand):
+        if issubclass(command, AceObject):
             group = obj['group']
             clazz = obj['class']
             if command.classIdentifier == clazz and command.groupIdentifier == group:
