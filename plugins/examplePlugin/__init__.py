@@ -21,17 +21,21 @@ class examplePlugin(Plugin):
     @register("de-DE", "(.*Hallo.*)|(.*Hi.*Siri.*)|(Hi)|(Hey)")
     @register("en-US", "(.*Hello.*)|(.*Hi.*Siri.*)|(Hi)|(Hey)")
     @register("fr-FR", ".*(Bonjour|Coucou|Salut)( Siri)?.*")
+    @register("nl-NL", ".*(Hallo|Goeiedag|Heey)( Siri)?.*")
     def st_hello(self, speech, language):
         if language == 'de-DE':
             self.say(u"Hallo {0}!".format(self.user_name()))
         elif language == 'fr-FR':
             self.say(u"Bonjour {0}!".format(self.user_name()));
+        elif language == 'nl-NL':
+            self.say(u"Hallo, {0}!".format(self.user_name()));
         else:
             self.say(u"Greetings, {0}!".format(self.user_name()))
         self.complete_request()
     
     @register("de-DE", ".*standort.*test.*")
     @register("en-US", ".*location.*test.*")
+    @register("nl-NL", ".*locatie.*test.*")
     def locationTest(self, speech, language):
         location = self.getCurrentLocation(force_reload=True)
         self.say(u"lat: {0}, long: {1}".format(location.latitude, location.longitude))
