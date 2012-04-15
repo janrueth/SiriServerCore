@@ -205,7 +205,7 @@ def main():
     parser.add_option('-p', '--port', default=4443, type='int', dest='port', help='This options lets you use a custom port instead of 443 (use a port > 1024 to run as non root user)')
     parser.add_option('--logfile', default=None, dest='logfile', help='Log to a file instead of stdout.')
     parser.add_option('-m', '--maxConnections', default=None, type='int', dest='maxConnections', help='You can limit the number of maximum simultaneous connections with that switch')
-    parser.add_option('-n', '--noSSL', action="store_true", default=False, dest='sslDisabled', help='You can switch of SSL with this switch.')
+    parser.add_option('-n', '--noSSL', action="store_true", default=False, dest='sslDisabled', help='You can switch off SSL with this switch.')
     (options, _) = parser.parse_args()
     
     x = logging.getLogger()
