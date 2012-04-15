@@ -205,6 +205,7 @@ def main():
     parser.add_option('-p', '--port', default=4443, type='int', dest='port', help='This options lets you use a custom port instead of 443 (use a port > 1024 to run as non root user)')
     parser.add_option('--logfile', default=None, dest='logfile', help='Log to a file instead of stdout.')
     parser.add_option('-m', '--maxConnections', default=None, type='int', dest='maxConnections', help='You can limit the number of maximum simultaneous connections with that switch')
+    parser.add_option('-n', '--noSSL', action="store_true", default=False, dest='sslDisabled', help='You can switch of SSL with this switch.')
     (options, _) = parser.parse_args()
     
     x = logging.getLogger()
@@ -219,7 +220,8 @@ def main():
     h.setFormatter(f)
     x.addHandler(h)
     
-    create_self_signed_cert()
+    if not options.sslDisabled:
+        create_self_signed_cert()
     
     try: 
         from twisted.internet import epollreactor
@@ -237,7 +239,11 @@ def main():
 
     
     x.info("Starting server on port {0}".format(options.port))
-    reactor.listenSSL(options.port, SiriFactory(options.maxConnections), ssl.DefaultOpenSSLContextFactory(SERVER_KEY_FILE, SERVER_CERT_FILE))
+    if options.sslDisabled:
+        x.warning("Starting, as requested, without SSL, connections are not secured and can be altered and eavesdropped on from client to server")
+        reactor.listenTCP(options.port, SiriFactory(options.maxConnections))
+    else:
+        reactor.listenSSL(options.port, SiriFactory(options.maxConnections), ssl.DefaultOpenSSLContextFactory(SERVER_KEY_FILE, SERVER_CERT_FILE))
     reactor.run()
     x.info("Server shutdown complete")
     
