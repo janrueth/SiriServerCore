@@ -169,14 +169,12 @@ class Plugin(threading.Thread):
                     
                     #We need to say something
                     view1 = UIAssistantUtteranceView()
-                    view1.text=__error_location_help__[self.__lang]
-                    view1.speakableText=__error_location_help__[self.__lang] 
+                    view1.text = view1.speakableText = __error_location_help__[self.__lang] if self.__lang in __error_location_help__ else __error_location_help__['en-US']
                     view1.dialogIdentifier="Common#assistantLocationServicesDisabled"
                     
                     #lets create another which has tells him to open settings
                     view2 = UIAssistantUtteranceView()
-                    view2.text=__error_location_saysettings__[self.__lang]
-                    view2.speakableText=__error_location_saysettings__[self.__lang]
+                    view2.text = view2.speakableText = __error_location_saysettings__[self.__lang] if self.__lang in __error_location_saysettings__ else __error_location_saysettings__['en-US']
                     view2.dialogIdentifier="Common#assistantLocationServicesDisabled"
                     
                     #create a link
@@ -185,7 +183,7 @@ class Plugin(threading.Thread):
                     
                     # create a button which opens the location tab in the settings if clicked on it
                     button = UIButton()
-                    button.text=__error_location_settings__[self.__lang]
+                    button.text = __error_location_settings__[self.__lang] if self.__lang in __error_location_settings__ else __error_location_settings__['en-US']
                     button.commands = [link]
                     
                     # wrap it up in a adds view
