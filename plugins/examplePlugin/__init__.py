@@ -21,7 +21,7 @@ class examplePlugin(Plugin):
     @register("de-DE", "(.*Hallo.*)|(.*Hi.*Siri.*)|(Hi)|(Hey)")
     @register("en-US", "(.*Hello.*)|(.*Hi.*Siri.*)|(Hi)|(Hey)")
     @register("fr-FR", ".*(Bonjour|Coucou|Salut)( Siri)?.*")
-    @register("nl-NL", ".*(Hallo|Goeiedag|Heey|He)( Siri)?.*")
+    @register("nl-NL", ".*(Hallo|Goeiedag|Heey)( Siri)?.*")
     def st_hello(self, speech, language):
         if language == 'de-DE':
             self.say(u"Hallo {0}!".format(self.user_name()))
