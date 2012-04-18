@@ -256,7 +256,7 @@ class SiriProtocolHandler(Siri):
                     decoder.destroy()
                 if encoder:
                     encoder.finish()
-                    encoder.destory()
+                    encoder.destroy()
                 del self.speech[cancelRequest.refId]
             if self.current_google_request != None:
                 self.current_google_request.cancel()
