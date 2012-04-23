@@ -10,3 +10,5 @@ ca.pem
 cakey.pem
 server.crt
 server.key
+
+plugins/
