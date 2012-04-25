@@ -111,8 +111,8 @@ def getPluginForImmediateExecution(assistantId, speech, language, otherPluginPar
     (pluginObj, method) = searchPrioritizedPlugin(assistantId, speech, language)
     if pluginObj == None and method == None:
         (clazz, method) = getPlugin(speech, language)
-        logger.info("Request handled by: %s.%s" % (clazz.__name__, method.__name__))
         if clazz != None and method != None:
+            logger.debug("Instanciating plugin and method: {0}.{1}".format(clazz.__name__, method.__name__))
             pluginObj = clazz()
             pluginObj.initialize(method, speech, language, sendObj, sendPlist, assistant, location)
             #prioritizePluginObject(pluginObj, assistantId)
