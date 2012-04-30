@@ -134,6 +134,7 @@ class Plugin(threading.Thread):
         self.assistant = assistant
         self.location = location
         self.__shouldCancel = False
+        self.__priority = False
         
     def _abortPluginRun(self):
         self.__shouldCancel = True
