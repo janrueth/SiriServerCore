@@ -112,316 +112,321 @@ mailTypes = {
 	}
 }
 
+
+identifierRetriever = re.compile("\^phoneCallContactId\^=\^urn:ace:(?P<identifier>.*)")
+
 def replaceNumberType(name, language):
-        if language == "de-DE":
-                if re.search(r"(?i)iphone(.*)nummer", name):
-                    return 'iPhone'
-                if re.search(r"(?i)handy(.*)nummer", name):
-                        return '_$!<Mobile>!$_'
-                if re.search(r"(?i)privat(.*)nummer", name):
-                        return '_$!<Home>!$_'
-                if re.search(r"(?i)geschäfts(.*)nummer", name):
-                        return '_$!<Work>!$_'
-                if re.search(r"(?i)haupt(.*)nummer", name):
-                        return '_$!<Main>!$_'
-                if name == "private Faxnummer":
-                        return '_$!<HomeFAX>!$_'
-                if name == "geschäftliche Faxnummer":
-                        return '_$!<WorkFAX>!$_'
-                if name == "anderes Fax":
-                        return '_$!<OtherFAX>!$_'
-                if re.search(r"(?i)pager(.*)nummer", name):
-                        return '_$!<Pager>!$_'
-                if name == "anderes Telefon":
-                        return '_$!<Other>!$_'
-        if language == "en-EN":
-                if name == "mobile":
-                        return '_$!<Mobile>!$_'
-                if name == "iPhone":
-                        return 'iPhone'
-                if name == "home":
-                        return '_$!<Home>!$_'
-                if name == "work":
-                        return '_$!<Work>!$_'
-                if name == "main":
-                        return '_$!<Main>!$_'
-                if name == "home fax":
-                        return '_$!<HomeFAX>!$_'
-                if name == "work fax":
-                        return '_$!<WorkFAX>!$_'
-                if name == "other fax":
-                        return '_$!<OtherFAX>!$_'
-                if name == "pager":
-                        return '_$!<Pager>!$_'
-                if name == "other phone":
-                        return '_$!<Other>!$_'
+	if language == "de-DE":
+		if re.search(r"(?i)iphone(.*)nummer", name):
+			return 'iPhone'
+		if re.search(r"(?i)handy(.*)nummer", name):
+			return '_$!<Mobile>!$_'
+		if re.search(r"(?i)privat(.*)nummer", name):
+			return '_$!<Home>!$_'
+		if re.search(r"(?i)geschäfts(.*)nummer", name):
+			return '_$!<Work>!$_'
+		if re.search(r"(?i)haupt(.*)nummer", name):
+			return '_$!<Main>!$_'
+		if name == "private Faxnummer":
+			return '_$!<HomeFAX>!$_'
+		if name == "geschäftliche Faxnummer":
+			return '_$!<WorkFAX>!$_'
+		if name == "anderes Fax":
+			return '_$!<OtherFAX>!$_'
+		if re.search(r"(?i)pager(.*)nummer", name):
+			return '_$!<Pager>!$_'
+		if name == "anderes Telefon":
+			return '_$!<Other>!$_'
+	if language == "en-EN":
+		if name == "mobile":
+			return '_$!<Mobile>!$_'
+		if name == "iPhone":
+			return 'iPhone'
+		if name == "home":
+			return '_$!<Home>!$_'
+		if name == "work":
+			return '_$!<Work>!$_'
+		if name == "main":
+			return '_$!<Main>!$_'
+		if name == "home fax":
+			return '_$!<HomeFAX>!$_'
+		if name == "work fax":
+			return '_$!<WorkFAX>!$_'
+		if name == "other fax":
+			return '_$!<OtherFAX>!$_'
+		if name == "pager":
+			return '_$!<Pager>!$_'
+		if name == "other phone":
+			return '_$!<Other>!$_'
 
 def replaceMailType(name, language):
-        if language == "de-DE":
-                if re.search(r"(?i)privat(.*)mail", name):
-                        return '_$!<Home>!$_'
-                if re.search(r"(?i)geschäfts(.*)mail", name):
-                        return '_$!<Work>!$_'
-                if name == "andere E-Mail":
-                        return '_$!<Other>!$_'
-        if language == "en-EN":
-                if name == "home":
-                        return '_$!<Home>!$_'
-                if name == "work":
-                        return '_$!<Work>!$_'
-                if name == "other mail":
-                        return '_$!<Other>!$_'
+	if language == "de-DE":
+		if re.search(r"(?i)privat(.*)mail", name):
+			return '_$!<Home>!$_'
+		if re.search(r"(?i)geschäfts(.*)mail", name):
+			return '_$!<Work>!$_'
+		if name == "andere E-Mail":
+			return '_$!<Other>!$_'
+	if language == "en-EN":
+		if name == "home":
+			return '_$!<Home>!$_'
+		if name == "work":
+			return '_$!<Work>!$_'
+		if name == "other mail":
+			return '_$!<Other>!$_'
 
 def findPhoneForNumberType(plugin, person, numberType, language):
-        number = None
-        if numberType != None:
-                phoneToCall = filter(lambda x: x.label == numberType, person.phones)
-        else:
-                favPhones = filter(lambda y: y.favoriteVoice if hasattr(y, "favoriteVoice") else False, person.phones)
-                if len(favPhones) == 1:
-                        number = favPhones[0]
-        if number == None:
-                if len(person.phones) == 1:
-                        if numberType != None:
-                                plugin.say(text["numberNotPresent"][language].format(numberTypes[language][numberType], person.fullName))
-                        number = person.phones[0]
-                else:
-                        while(number == None):
-                                rootView = UIAddViews(plugin.refId)
-                                rootView.temporary=False
-                                rootView.dialogPhase="Clarification"
-                                rootView.scrollToTop=False
-                                rootView.views=[]
-                                sayit = text['selectNumber'][language].format(person.fullName)
-                                assistant = UIAssistantUtteranceView()
-                                assistant.text = assistant.speakableText = sayit
-                                assistant.listenAfterSpeaking=True
-                                assistant.dialogIdentifier="ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"
-                                rootView.views.append(assistant)
-                                lst = UIDisambiguationList()
-                                lst.items = []
-                                lst.speakableSelectionResponse="OK..."
-                                lst.listenAfterSpeaking=True
-                                lst.speakableText=""
-                                lst.speakableFinalDemitter=speakableDemitter[language]
-                                lst.speakableDemitter=", "
-                                lst.selectionResponse="OK..."
-                                rootView.views.append(lst)
-                                for phone in person.phones:
-                                        numberType = phone.label
-                                        item = UIListItem()
-                                        item.title = ""
-                                        item.text = u"{0}: {1}".format(numberTypes[language][numberType], phone.number)
-                                        item.selectionText = item.text
-                                        item.speakableText = u"{0}  ".format(numberTypes[language][numberType])
-                                        item.object = phone
-                                        item.commands = []
-                                        item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=numberTypes[language][numberType])]))
-                                        lst.items.append(item)
-                                answer = plugin.getResponseForRequest(rootView)
-                                answer = replaceNumberType(answer, language)
-                                numberType = answer
-                                if numberType != None:
-                                        matches = filter(lambda x: x.label == numberType, person.phones)
-                                        if len(matches) == 1:
-                                                number = matches[0]
-                                        else:
-                                                plugin.say(text['errorNumberTypes'][language])
-                                else:
-                                        plugin.say(text['errorNumberTypes'][language])
-        return number
+	number = None
+	if numberType != None:
+		phoneToCall = filter(lambda x: x.label == numberType, person.phones)
+	else:
+		favPhones = filter(lambda y: y.favoriteVoice if hasattr(y, "favoriteVoice") else False, person.phones)
+		if len(favPhones) == 1:
+			number = favPhones[0]
+	if number == None:
+		if len(person.phones) == 1:
+			if numberType != None:
+				plugin.say(text["numberNotPresent"][language].format(numberTypes[language][numberType], person.fullName))
+			number = person.phones[0]
+		else:
+			while(number == None):
+				rootView = UIAddViews(plugin.refId)
+				rootView.temporary = False
+				rootView.dialogPhase = "Clarification"
+				rootView.scrollToTop = False
+				rootView.views = []
+				sayit = text['selectNumber'][language].format(person.fullName)
+				assistant = UIAssistantUtteranceView()
+				assistant.text = assistant.speakableText = sayit
+				assistant.listenAfterSpeaking = True
+				assistant.dialogIdentifier = "ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"
+				rootView.views.append(assistant)
+				lst = UIDisambiguationList()
+				lst.items = []
+				lst.speakableSelectionResponse = "OK..."
+				lst.listenAfterSpeaking = True
+				lst.speakableText = ""
+				lst.speakableFinalDemitter = speakableDemitter[language]
+				lst.speakableDemitter = ", "
+				lst.selectionResponse = "OK..."
+				rootView.views.append(lst)
+				for phone in person.phones:
+					numberType = phone.label
+					item = UIListItem()
+					item.title = ""
+					item.text = u"{0}: {1}".format(numberTypes[language][numberType], phone.number)
+					item.selectionText = item.text
+					item.speakableText = u"{0}  ".format(numberTypes[language][numberType])
+					item.object = phone
+					item.commands = []
+					item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=numberTypes[language][numberType])]))
+					lst.items.append(item)
+				answer = plugin.getResponseForRequest(rootView)
+				answer = replaceNumberType(answer, language)
+				numberType = answer
+				if numberType != None:
+					matches = filter(lambda x: x.label == numberType, person.phones)
+					if len(matches) == 1:
+						number = matches[0]
+					else:
+						plugin.say(text['errorNumberTypes'][language])
+				else:
+					plugin.say(text['errorNumberTypes'][language])
+	return number
 
 def findMailForMailType(plugin, person, mailType, language):
-        mail = None
-        if mailType != None:
-                mailToWrite = filter(lambda x: x.label == mailType, person.emails)
-        else:
-                favMails = filter(lambda y: y.favoriteVoice if hasattr(y, "favoriteVoice") else False, person.emails)
-                if len(favMails) == 1:
-                        mail = favMails[0]
-        if mail == None:
-                if len(person.emails) == 1:
-                        if mailType != None:
-                                plugin.say(text["numberNotPresent"][language].format(mailTypes[language][mailType], person.fullName))
-                        mail = person.emails[0]
-                else:
-                        while(mail == None):
-                                rootView = UIAddViews(plugin.refId)
-                                rootView.temporary=False
-                                rootView.dialogPhase="Clarification"
-                                rootView.scrollToTop=False
-                                rootView.views=[]
-                                sayit = text['selectMail'][language].format(person.fullName)
-                                assistant = UIAssistantUtteranceView()
-                                assistant.text = assistant.speakableText = sayit
-                                assistant.listenAfterSpeaking=True
-                                assistant.dialogIdentifier="ContactDataResolutionDucs#foundAmbiguousMailForContact"
-                                rootView.views.append(assistant)
-                                lst = UIDisambiguationList()
-                                lst.items = []
-                                lst.speakableSelectionResponse="OK..."
-                                lst.listenAfterSpeaking=True
-                                lst.speakableText=""
-                                lst.speakableFinalDemitter=speakableDemitter[language]
-                                lst.speakableDemitter=", "
-                                lst.selectionResponse="OK..."
-                                rootView.views.append(lst)
-                                for email in person.emails:
-                                        mailType = email.label
-                                        item = UIListItem()
-                                        item.title = ""
-                                        item.text = u"{0}: {1}".format(mailTypes[language][mailType], email.emailAddress)
-                                        item.selectionText = item.text
-                                        item.speakableText = u"{0}  ".format(mailTypes[language][mailType])
-                                        item.object = email
-                                        item.commands = []
-                                        item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=mailTypes[language][mailType])]))
-                                        lst.items.append(item)
-                                answer = plugin.getResponseForRequest(rootView)
-                                answer = replaceMailType(answer, language)
-                                mailType = answer
-                                if mailType != None:
-                                        matches = filter(lambda x: x.label == mailType, person.emails)
-                                        if len(matches) == 1:
-                                                mail = matches[0]
-                                        else:
-                                                plugin.say(text['errorNumberTypes'][language])
-                                else:
-                                        plugin.say(text['errorNumberTypes'][language])
-        return mail
+	mail = None
+	if mailType != None:
+		mailToWrite = filter(lambda x: x.label == mailType, person.emails)
+	else:
+		favMails = filter(lambda y: y.favoriteVoice if hasattr(y, "favoriteVoice") else False, person.emails)
+		if len(favMails) == 1:
+			mail = favMails[0]
+	if mail == None:
+		if len(person.emails) == 1:
+			if mailType != None:
+				plugin.say(text["numberNotPresent"][language].format(mailTypes[language][mailType], person.fullName))
+			mail = person.emails[0]
+		else:
+			while(mail == None):
+				rootView = UIAddViews(plugin.refId)
+				rootView.temporary = False
+				rootView.dialogPhase = "Clarification"
+				rootView.scrollToTop = False
+				rootView.views = []
+				sayit = text['selectMail'][language].format(person.fullName)
+				assistant = UIAssistantUtteranceView()
+				assistant.text = assistant.speakableText = sayit
+				assistant.listenAfterSpeaking = True
+				assistant.dialogIdentifier = "ContactDataResolutionDucs#foundAmbiguousMailForContact"
+				rootView.views.append(assistant)
+				lst = UIDisambiguationList()
+				lst.items = []
+				lst.speakableSelectionResponse = "OK..."
+				lst.listenAfterSpeaking = True
+				lst.speakableText = ""
+				lst.speakableFinalDemitter = speakableDemitter[language]
+				lst.speakableDemitter = ", "
+				lst.selectionResponse = "OK..."
+				rootView.views.append(lst)
+				for email in person.emails:
+					mailType = email.label
+					item = UIListItem()
+					item.title = ""
+					item.text = u"{0}: {1}".format(mailTypes[language][mailType], email.emailAddress)
+					item.selectionText = item.text
+					item.speakableText = u"{0}  ".format(mailTypes[language][mailType])
+					item.object = email
+					item.commands = []
+					item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=mailTypes[language][mailType])]))
+					lst.items.append(item)
+				answer = plugin.getResponseForRequest(rootView)
+				answer = replaceMailType(answer, language)
+				mailType = answer
+				if mailType != None:
+					matches = filter(lambda x: x.label == mailType, person.emails)
+					if len(matches) == 1:
+						mail = matches[0]
+					else:
+						plugin.say(text['errorNumberTypes'][language])
+				else:
+					plugin.say(text['errorNumberTypes'][language])
+	return mail
 
-def searchPerson(plugin, scope, relatedNames=None, phone=None, name=None, me=None, email=None, company = None, birthday=None, adress=None):
-        search = ABPersonSearch(plugin.refId)
-        search.scope = scope
-        search.relatedNames = relatedNames
-        search.phone = phone
-        search.name = name
-        search.me = me
-        search.email = email
-        search.company = company
-        search.birthday = birthday
-        search.address = adress
-        answerObj = plugin.getResponseForRequest(search)
-        if ObjectIsCommand(answerObj, ABPersonSearchCompleted):
-                answer = ABPersonSearchCompleted(answerObj)
-                return answer.results if answer.results != None else []
-        else:
-                raise StopPluginExecution("Unknown response: {0}".format(answerObj))
-        return []
+def searchPerson(plugin, scope, relatedNames=None, phone=None, name=None, me=None, email=None, company=None, birthday=None, adress=None):
+	search = ABPersonSearch(plugin.refId)
+	search.scope = scope
+	search.relatedNames = relatedNames
+	search.phone = phone
+	search.name = name
+	search.me = me
+	search.email = email
+	search.company = company
+	search.birthday = birthday
+	search.address = adress
+	answerObj = plugin.getResponseForRequest(search)
+	if ObjectIsCommand(answerObj, ABPersonSearchCompleted):
+		answer = ABPersonSearchCompleted(answerObj)
+		return answer.results if answer.results != None else []
+	else:
+		raise StopPluginExecution("Unknown response: {0}".format(answerObj))
+	return []
 
 def getRelation(plugin, relation, language):
-        if relation != None:
-                if relation.lower() in relationTypes[language]:
-                        return relationTypes[language][relation.lower()]
-        return relation
+	if relation != None:
+		if relation.lower() in relationTypes[language]:
+			return relationTypes[language][relation.lower()]
+	return relation
 
 def relatedNamesAction(plugin, personsData, relation, language):
-        root = UIAddViews(plugin.refId)
-        root.scrollToTop = False
-        root.temporary = False
-        root.dialogPhase = "Clarification"
-        root.views = []
-        root.callbacks = []
-        assistant = UIAssistantUtteranceView()
-        assistant.text = assistant.speakableText = text["select"][language]
-        assistant.dialogIdentifier = "ContactDataResolutionDucs#disambiguateContact"
-        assistant.listenAfterSpeaking=True
-        root.views.append(assistant)
-        lst = UIDisambiguationList()
-        lst.items = []
-        lst.speakableSelectionResponse = "OK!"
-        lst.listenAfterSpeaking = True
-        lst.speakableText = ""
-        lst.speakableFinalDemitter = speakableDemitter
-        lst.speakableDemitter = ", "
-        lst.selectionResponse = "OK!"
-        root.views.append(lst)
-        i = 0
-        for person in personsData:
-                if person.label == relation:
-                        i+=1
-        if i > 0:
-                if i == 1:
-                        for person in personsData:
-                                if person.label == relation:
-                                        returnData = person.name
-                else:
-                        for person in personsData:
-                                if person.label == relation:
-                                        item = UIListItem()
-                                        item.title = person.name
-                                        item.selectionText = person.name
-                                        item.commands = []
-                                        item.speakableText = person.name
-                                        item.obj = person
-                                        item.commands.append(SendCommands([StartRequest(False, person.name)]))
-                                        lst.items.append(item)
-                        returnData = plugin.getResponseForRequest(root)
-        return returnData
+	root = UIAddViews(plugin.refId)
+	root.scrollToTop = False
+	root.temporary = False
+	root.dialogPhase = "Clarification"
+	root.views = []
+	root.callbacks = []
+	assistant = UIAssistantUtteranceView()
+	assistant.text = assistant.speakableText = text["select"][language]
+	assistant.dialogIdentifier = "ContactDataResolutionDucs#disambiguateContact"
+	assistant.listenAfterSpeaking = True
+	root.views.append(assistant)
+	lst = UIDisambiguationList()
+	lst.items = []
+	lst.speakableSelectionResponse = "OK!"
+	lst.listenAfterSpeaking = True
+	lst.speakableText = ""
+	lst.speakableFinalDemitter = speakableDemitter
+	lst.speakableDemitter = ", "
+	lst.selectionResponse = "OK!"
+	root.views.append(lst)
+	i = 0
+	for person in personsData:
+		if person.label == relation:
+			i += 1
+	if i > 0:
+		if i == 1:
+			for person in personsData:
+				if person.label == relation:
+					returnData = person.name
+		else:
+			for person in personsData:
+				if person.label == relation:
+					item = UIListItem()
+					item.title = person.name
+					item.selectionText = person.name
+					item.commands = []
+					item.speakableText = person.name
+					item.obj = person
+					item.commands.append(SendCommands([StartRequest(False, person.name)]))
+					lst.items.append(item)
+			returnData = plugin.getResponseForRequest(root)
+	return returnData
 
 def presentPossibleUsers(plugin, persons, language):
-        root = UIAddViews(plugin.refId)
-        root.scrollToTop = False
-        root.temporary = False
-        root.dialogPhase = "Clarification"
-        root.views = []
-        root.callbacks = []
-        assistant = UIAssistantUtteranceView()
-        assistant.text = assistant.speakableText = text["select"][language]
-        assistant.dialogIdentifier = "ContactDataResolutionDucs#disambiguateContact"
-        assistant.listenAfterSpeaking = True
-        root.views.append(assistant)
-        lst = UIDisambiguationList()
-        lst.items = []
-        lst.speakableSelectionResponse = "OK!"
-        lst.listenAfterSpeaking = True
-        lst.speakableText = ""
-        lst.speakableFinalDemitter = speakableDemitter
-        lst.speakableDemitter = ", "
-        lst.selectionResponse = "OK!"
-        root.views.append(lst)
-        for person in persons:
-                item = UIListItem()
-                item.title = person.fullName
-                item.selectionText = person.fullName
-                item.commands = []
-                item.speakableText = person.fullName
-                item.obj = person
-                item.commands.append(SendCommands([StartRequest(False, person.fullName)]))
-                lst.items.append(item)
-        return root
+	root = UIAddViews(plugin.refId)
+	root.scrollToTop = False
+	root.temporary = False
+	root.dialogPhase = "Clarification"
+	root.views = []
+	root.callbacks = []
+	assistant = UIAssistantUtteranceView()
+	assistant.text = assistant.speakableText = text["select"][language]
+	assistant.dialogIdentifier = "ContactDataResolutionDucs#disambiguateContact"
+	assistant.listenAfterSpeaking = True
+	root.views.append(assistant)
+	lst = UIDisambiguationList()
+	lst.items = []
+	lst.speakableSelectionResponse = "OK!"
+	lst.listenAfterSpeaking = True
+	lst.speakableText = ""
+	lst.speakableFinalDemitter = speakableDemitter
+	lst.speakableDemitter = ", "
+	lst.selectionResponse = "OK!"
+	root.views.append(lst)
+	for person in persons:
+		item = UIListItem()
+		item.title = person.fullName
+		item.selectionText = person.fullName
+		item.speakableText = person.fullName
+		item.obj = person
+		item.commands = [SendCommands([StartRequest(False, "^phoneCallContactId^=^urn:ace:{0}".format(person.identifier))])]
+		lst.items.append(item)
+	return root
 
 def personAction(plugin, personsData, language):
-        person = None
-        if len(personsData) > 0:
-                if len(personsData) == 1:
-                        person = personsData[0]
-                else:
-                        while(person == None):
-                                choosenPerson = plugin.getResponseForRequest(presentPossibleUsers(plugin, personsData, language))
-                                for personData in personsData:
-                                        if choosenPerson == personData.fullName:
-                                                person = personData
-                if person != None:
-                        return person
-        else:
-                return None
+	person = None
+	if len(personsData) > 0:
+		if len(personsData) == 1:
+			person = personsData[0]
+		else:
+			while(person == None):
+				choosenPerson = plugin.getResponseForRequest(presentPossibleUsers(plugin, personsData, language))
+				choosenPersonIdentifier = identifierRetriever.match(choosenPerson)
+				if not choosenPersonIdentifier is None:
+					choosenPersonIdentifier = choosenPersonIdentifier.group("identifier")
+					for personData in personsData:
+						if choosenPersonIdentifier == personData.identifier:
+							person = personData
+	if person != None:
+			return person
+	else:
+		return None
 
 def definePerson(plugin, scope, name, relation, me, language):
-        if relation != None:
-                relation = getRelation(plugin, relation, language)
-                if me == True or name == None:
-                        relationPerson = searchPerson(plugin, scope="Local", me=True)[0]
-                else:
-                        relationPerson = searchPerson(plugin, scope="Local",name=name)[0]
-                name = relatedNamesAction(plugin, relationPerson.relatedNames, relation, language)
-        personsData = searchPerson(plugin, scope=scope, name=name)
-        if personsData == [] and name[-1] == "s":
-                name = name[:-1]
-                personsData = searchPerson(plugin, scope=scope, name=name)
-        personData = personAction(plugin, personsData, language)
-        if personData != None:
-                return personData
-        else:
-                plugin.say(text['notFound'][language].format(name))
-                plugin.complete_request()
+	if relation != None:
+		relation = getRelation(plugin, relation, language)
+		if me == True or name == None:
+			relationPerson = searchPerson(plugin, scope="Local", me=True)[0]
+		else:
+			relationPerson = searchPerson(plugin, scope="Local", name=name)[0]
+		name = relatedNamesAction(plugin, relationPerson.relatedNames, relation, language)
+	personsData = searchPerson(plugin, scope=scope, name=name)
+	if personsData == [] and name[-1] == "s":
+		name = name[:-1]
+		personsData = searchPerson(plugin, scope=scope, name=name)
+	personData = personAction(plugin, personsData, language)
+	if personData != None:
+		return personData
+	else:
+		plugin.say(text['notFound'][language].format(name))
+		plugin.complete_request()
