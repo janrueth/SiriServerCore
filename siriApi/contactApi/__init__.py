@@ -229,6 +229,7 @@ def findPhoneForNumberType(plugin, person, numberType, language):
 				assistant.listenAfterSpeaking = True
 				assistant.dialogIdentifier = "ContactDataResolutionDucs#foundAmbiguousPhoneNumberForContact"
 				rootView.views.append(assistant)
+				
 				lst = UIDisambiguationList()
 				lst.items = []
 				lst.speakableSelectionResponse = "OK..."
@@ -248,6 +249,7 @@ def findPhoneForNumberType(plugin, person, numberType, language):
 					item.object = phone
 					item.commands = [SendCommands(commands=[StartRequest(handsFree=False, utterance=numberType)])]
 					lst.items.append(item)
+					
 				answer = plugin.getResponseForRequest(rootView)
 				answer = getNumberTypeForName(answer, language)
 				numberType = answer
