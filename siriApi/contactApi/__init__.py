@@ -112,6 +112,23 @@ mailTypes = {
 	}
 }
 
+numberTypesLocalized= {
+'_$!<Mobile>!$_': {'en-US': u"mobile", 'de-DE': u"Handynummer"},
+'iPhone': {'en-US': u"iPhone", 'de-DE': u"iPhone-Nummer"},
+'_$!<Home>!$_': {'en-US': u"home", 'de-DE': u"Privatnummer"},
+'_$!<Work>!$_': {'en-US': u"work", 'de-DE': u"Geschäftsnummer"},
+'_$!<Main>!$_': {'en-US': u"main", 'de-DE': u"Hauptnummer"},
+'_$!<HomeFAX>!$_': {'en-US': u"home fax", 'de-DE': u'private Faxnummer'},
+'_$!<WorkFAX>!$_': {'en-US': u"work fax", 'de-DE': u"geschäftliche Faxnummer"},
+'_$!<OtherFAX>!$_': {'en-US': u"_$!<OtherFAX>!$_", 'de-DE': u"_$!<OtherFAX>!$_"},
+'_$!<Pager>!$_': {'en-US': u"pager", 'de-DE': u"Pagernummer"},
+'_$!<Other>!$_':{'en-US': u"other phone", 'de-DE': u"anderes Telefon"}
+}
+
+namesToNumberTypes = {
+'de-DE': {'mobile': "_$!<Mobile>!$_", 'handy': "_$!<Mobile>!$_", 'zuhause': "_$!<Home>!$_", 'privat': "_$!<Home>!$_", 'arbeit': "_$!<Work>!$_"},
+'en-US': {'work': "_$!<Work>!$_",'home': "_$!<Home>!$_", 'mobile': "_$!<Mobile>!$_"}
+}
 
 identifierRetriever = re.compile("\^phoneCallContactId\^=\^urn:ace:(?P<identifier>.*)")
 
@@ -174,6 +191,17 @@ def replaceMailType(name, language):
 			return '_$!<Work>!$_'
 		if name == "other mail":
 			return '_$!<Other>!$_'
+		
+def getNumberTypeForName(name, language):
+	# q&d
+	if name != None:
+		if name.lower() in namesToNumberTypes[language]:
+			return namesToNumberTypes[language][name.lower()]
+		else:
+			for key in numberTypesLocalized.keys():
+				if numberTypesLocalized[key][language].lower() == name.lower():
+					return numberTypesLocalized[key][language]
+	return name
 
 def findPhoneForNumberType(plugin, person, numberType, language):
 	number = None
@@ -211,18 +239,17 @@ def findPhoneForNumberType(plugin, person, numberType, language):
 				lst.selectionResponse = "OK..."
 				rootView.views.append(lst)
 				for phone in person.phones:
-					numberType = phone.label
+					numberType = numberTypesLocalized[phone.label][language] if phone.label in numberTypesLocalized else phone.label
 					item = UIListItem()
 					item.title = ""
-					item.text = u"{0}: {1}".format(numberTypes[language][numberType], phone.number)
+					item.text = u"{0}: {1}".format(numberType, phone.number)
 					item.selectionText = item.text
-					item.speakableText = u"{0}  ".format(numberTypes[language][numberType])
+					item.speakableText = u"{0}  ".format(numberType)
 					item.object = phone
-					item.commands = []
-					item.commands.append(SendCommands(commands=[StartRequest(handsFree=False, utterance=numberTypes[language][numberType])]))
+					item.commands = [SendCommands(commands=[StartRequest(handsFree=False, utterance=numberType)])]
 					lst.items.append(item)
 				answer = plugin.getResponseForRequest(rootView)
-				answer = replaceNumberType(answer, language)
+				answer = getNumberTypeForName(answer, language)
 				numberType = answer
 				if numberType != None:
 					matches = filter(lambda x: x.label == numberType, person.phones)
@@ -357,6 +384,11 @@ def relatedNamesAction(plugin, personsData, relation, language):
 					item.commands = []
 					item.speakableText = person.name
 					item.obj = person
+					#
+					#
+					#
+					#
+					# should we not better use the identifier here? name is not really unique
 					item.commands.append(SendCommands([StartRequest(False, person.name)]))
 					lst.items.append(item)
 			returnData = plugin.getResponseForRequest(root)
@@ -389,6 +421,7 @@ def presentPossibleUsers(plugin, persons, language):
 		item.selectionText = person.fullName
 		item.speakableText = person.fullName
 		item.obj = person
+		#use the identifier here, it can distinquish better between users
 		item.commands = [SendCommands([StartRequest(False, "^phoneCallContactId^=^urn:ace:{0}".format(person.identifier))])]
 		lst.items.append(item)
 	return root
@@ -402,10 +435,10 @@ def personAction(plugin, personsData, language):
 			while(person == None):
 				choosenPerson = plugin.getResponseForRequest(presentPossibleUsers(plugin, personsData, language))
 				choosenPersonIdentifier = identifierRetriever.match(choosenPerson)
-				if not choosenPersonIdentifier is None:
+				if choosenPersonIdentifier:
 					choosenPersonIdentifier = choosenPersonIdentifier.group("identifier")
 					for personData in personsData:
-						if choosenPersonIdentifier == personData.identifier:
+						if choosenPersonIdentifier == personData.identifier or choosenPerson == personData.fullName:
 							person = personData
 	if person != None:
 			return person
