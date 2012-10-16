@@ -13,9 +13,10 @@ from siriObjects.systemObjects import StartRequest, SendCommands, CancelRequest,
     CancelSucceeded, GetSessionCertificate, GetSessionCertificateResponse, \
     CreateSessionInfoRequest, CommandFailed, RollbackRequest, CreateAssistant, \
     AssistantCreated, SetAssistantData, LoadAssistant, AssistantNotFound, \
-    AssistantLoaded, DestroyAssistant, AssistantDestroyed
+    AssistantLoaded, DestroyAssistant, AssistantDestroyed, CreateSessionInfoResponse
 from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, UIButton
 import PluginManager
+import biplist
 import flac
 import json
 import pprint
@@ -286,10 +287,16 @@ class SiriProtocolHandler(Siri):
         elif ObjectIsCommand(plist, CreateSessionInfoRequest):
             # how does a positive answer look like?
             createSessionInfoRequest = CreateSessionInfoRequest(plist)
-            fail = CommandFailed(createSessionInfoRequest.aceId)
-            fail.reason = "Not authenticated"
-            fail.errorCode = 0
-            self.send_object(fail)
+            
+            success = CreateSessionInfoResponse(createSessionInfoRequest.aceId)
+            success.sessionInfo = biplist.Data("\x01\x02BLABLABLBALBALBALBALBALBALBALBA")
+            success.validityDuration = 9600
+            
+            self.send_object(success)
+            #fail = CommandFailed(createSessionInfoRequest.aceId)
+            #fail.reason = "Not authenticated"
+            #fail.errorCode = 0
+            #self.send_object(fail)
 
             #self.send_plist({"class":"SessionValidationFailed", "properties":{"errorCode":"UnsupportedHardwareVersion"}, "aceId": str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
             
@@ -297,7 +304,11 @@ class SiriProtocolHandler(Siri):
             createAssistant = CreateAssistant(plist)
             #create a new assistant
             helper = Assistant()     
-            helper.assistantId = str.upper(str(uuid.uuid4())) 
+            helper.assistantId = str.upper(str(uuid.uuid4()))
+            helper.language = createAssistant.language
+            helper.activationToken = createAssistant.activationToken
+            helper.connectionType = createAssistant.connectionType
+            helper.validationData = createAssistant.validationData
             c = self.dbConnection.cursor()
             noError = True
             try:

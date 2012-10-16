@@ -29,6 +29,10 @@ def getConnection():
 
 class Assistant(SetAssistantData):
     def __init__(self):
+        self.activationToken = None # @"NSData"
+        self.connectionType = None # @"NSString"
+        self.language = None # @"NSString"
+        self.validationData = None # @"NSData"
         self.assistantId = None
         self.nickName = u''
         self.firstName=u''
