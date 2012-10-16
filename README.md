@@ -30,7 +30,7 @@ The easiest way to do so is like this:
     cd /var/mobile/Library/Preferences
     plutil -convert xml1 com.apple.assistant.plist 
 
-now edit the contents (with your favorite editor) and add (between <dict></dict> underneath <keys>Account</keys>):
+now edit the contents (with your favorite editor) and add (between `<dict></dict>` underneath `<keys>Account</keys>`):
     
     <key>Authentication Disabled</key>
     <true/>
@@ -38,7 +38,7 @@ now edit the contents (with your favorite editor) and add (between <dict></dict>
 **To Difficult?**
 
 You can also install my tweak available via Cydia which takes care of all of this, also it allows you to select
-more languages. Add "http://cydia.siri-server.com/" to your Cydia sources. And install
+more languages. Add http://cydia.siri-server.com/ to your Cydia sources. And install
 "SiriServer Tweaks". Check your Preferences.app for further settings.
 
 
