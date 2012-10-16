@@ -376,6 +376,10 @@ class SiriProtocolHandler(Siri):
                     self.logger.warning("Assistant not found in database!!")                        
                 else:
                     self.assistant = result[0]
+                    #update assistant from LoadAssistant
+                    self.assistant.language = loadAssistant.language
+                    self.assistant.connectionType = loadAssistant.connectionType
+                    
                     if self.assistant.language == '' or self.assistant.language == None:
                         self.logger.error ("No language is set for this assistant")                        
                         c.execute("delete from assistants where assistantId = ?", (plist['properties']['assistantId'],))
