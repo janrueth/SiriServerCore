@@ -9,6 +9,40 @@ Or if you just want to give me a little credit for my work. But don't worry the 
 [<img alt="PayPal — The safer, easier way to pay online." src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif">](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2E3TD99JETMA4)
 
 
+NEWS
+----
+
+**iOS 6 Update**
+
+I cannot guarantee that the version here will work with anything pre iOS 6.
+
+There were some changes in iOS 6. To use the server with iOS 6 you must
+disable Siri's Authentication mechanism. You can do this by adding (or via Cydia see below)
+
+    <key>Authentication Disabled</key>
+    <true/>
+    
+`/var/mobile/Library/Preferences/com.apple.assistant.plist`
+
+The easiest way to do so is like this:
+    
+    ssh into your device
+    cd /var/mobile/Library/Preferences
+    plutil -convert xml1 com.apple.assistant.plist 
+
+now edit the contents (with your favorite editor) and add (between <dict></dict> underneath <keys>Account</keys>):
+    
+    <key>Authentication Disabled</key>
+    <true/>
+
+**To Difficult?**
+
+You can also install my tweak available via Cydia which takes care of all of this, also it allows you to select
+more languages. Add "http://cydia.siri-server.com/" to your Cydia sources. And install
+"SiriServer Tweaks". Check your Preferences.app for further settings.
+
+
+
 What is this?
 -------------
 This is a very early version of a Siri Server (not a proxy).
