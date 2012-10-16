@@ -21,7 +21,8 @@ disable Siri's Authentication mechanism. You can do this by adding (or via Cydia
 
     <key>Authentication Disabled</key>
     <true/>
-    
+to
+
 `/var/mobile/Library/Preferences/com.apple.assistant.plist`
 
 The easiest way to do so is like this:
