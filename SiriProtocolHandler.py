@@ -286,19 +286,19 @@ class SiriProtocolHandler(Siri):
 
         elif ObjectIsCommand(plist, CreateSessionInfoRequest):
             # how does a positive answer look like?
-            createSessionInfoRequest = CreateSessionInfoRequest(plist)
+            #createSessionInfoRequest = CreateSessionInfoRequest(plist)
             
-            success = CreateSessionInfoResponse(createSessionInfoRequest.aceId)
-            success.sessionInfo = biplist.Data("\x01\x02BLABLABLBALBALBALBALBALBALBALBA")
-            success.validityDuration = 9600
+            #success = CreateSessionInfoResponse(createSessionInfoRequest.aceId)
+            #success.sessionInfo = biplist.Data("\x01\x02BLABLABLBALBALBALBALBALBALBALBA")
+            #success.validityDuration = 9600
             
-            self.send_object(success)
-            #fail = CommandFailed(createSessionInfoRequest.aceId)
-            #fail.reason = "Not authenticated"
-            #fail.errorCode = 0
-            #self.send_object(fail)
+            #self.send_object(success)
+            fail = CommandFailed(createSessionInfoRequest.aceId)
+            fail.reason = "Not authenticated"
+            fail.errorCode = 0
+            self.send_object(fail)
 
-            #self.send_plist({"class":"SessionValidationFailed", "properties":{"errorCode":"UnsupportedHardwareVersion"}, "aceId": str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
+            ##self.send_plist({"class":"SessionValidationFailed", "properties":{"errorCode":"UnsupportedHardwareVersion"}, "aceId": str(uuid.uuid4()), "refId":plist['aceId'], "group":"com.apple.ace.system"})
             
         elif ObjectIsCommand(plist, CreateAssistant):
             createAssistant = CreateAssistant(plist)
@@ -391,7 +391,7 @@ class SiriProtocolHandler(Siri):
                     else:                        
                         loaded = AssistantLoaded(loadAssistant.aceId)
                         loaded.version = "20111216-32234-branches/telluride?cnxn=293552c2-8e11-4920-9131-5f5651ce244e"
-                        loaded.requestSync = False
+                        loaded.requestSync = 0
                         try:
                             loaded.dataAnchor = self.assistant.anchor
                         except:
