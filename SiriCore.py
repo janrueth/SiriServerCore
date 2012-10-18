@@ -69,6 +69,10 @@ class Siri(LineReceiver):
             self.logger.debug("---------------HEADER END----------------")
             request = HTTPRequest(self.header)
             if request.error_code == None:
+                if request.command == "HEAD" and request.path == "/salt":
+                    return (406, "Unacceptable")
+                if request.command == "HEAD" and request.path == "/ace":
+                    return (406, "Unacceptable")
                 if request.command != "ACE":
                     return (405, "Method Not Allowed")
                 if request.path != "/ace":
@@ -88,13 +92,14 @@ class Siri(LineReceiver):
                 code = 200
                 message = "OK"
                 success = True
+                self.output_buffer = ("HTTP/1.1 {0} {1}\r\nServer: Apache-Coyote/1.1\r\nDate: " + formatdate(timeval=None, localtime=False, usegmt=True) + "\r\nConnection: close\r\n\r\n").format(code, message)
             else:
                 # we need to receive more
                 return
         else:
             code, message = headerCheck
+            self.output_buffer = "HTTP/1.0 {0} {1}\r\nContent-Length: {2}\r\n\r\n{0} {1}".format(code, message, len(str(code))+len(message)+1)
             
-        self.output_buffer = ("HTTP/1.1 {0} {1}\r\nServer: Apache-Coyote/1.1\r\nDate: " + formatdate(timeval=None, localtime=False, usegmt=True) + "\r\nConnection: close\r\n\r\n").format(code, message)
         self.flush_output_buffer()
         if not success:
             self.transport.loseConnection()
