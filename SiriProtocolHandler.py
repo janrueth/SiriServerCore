@@ -15,6 +15,8 @@ from siriObjects.systemObjects import StartRequest, SendCommands, CancelRequest,
     AssistantCreated, SetAssistantData, LoadAssistant, AssistantNotFound, \
     AssistantLoaded, DestroyAssistant, AssistantDestroyed, CreateSessionInfoResponse
 from siriObjects.uiObjects import UIAddViews, UIAssistantUtteranceView, UIButton
+from siriObjects.syncObjects import SyncChunk, SyncChunkAccepted, SyncAnchor,\
+    SyncChunkDenied
 import PluginManager
 import biplist
 import flac
@@ -47,6 +49,7 @@ class SiriProtocolHandler(Siri):
         self.current_google_request = None
         self.current_location = None
         self.lastPingTime = time.time()
+        self.syncAnchors = dict()
         self.timeoutschedule = twisted.internet.reactor.callLater(SiriProtocolHandler.__scheduling_interval_timeout__, self.checkTimeout)
         
     def seconds_since_last_ping(self):
@@ -276,6 +279,25 @@ class SiriProtocolHandler(Siri):
             
         elif ObjectIsCommand(plist, RollbackRequest):
             pass
+        
+        elif ObjectIsCommand(plist, SyncChunk):
+            chunk = SyncChunk(plist)
+            previous = self.syncAnchors[chunk.key] if chunk.key in self.syncAnchors else None
+            if previous != None:
+                if previous.generation != chunk.preGen:
+                    chunkDenied = SyncChunkDenied(chunk.aceId)
+                    self.send_object(chunkDenied)
+                    return 
+            current = SyncAnchor()
+            current.generation = chunk.postGen
+            current.value = chunk.postGen
+            current.validity = chunk.validity
+            current.key = chunk.key
+            self.syncAnchors[current.key] = current
+            chunkAccepted = SyncChunkAccepted(chunk.aceId)
+            chunkAccepted.current = current
+            self.send_object(chunkAccepted)
+            pass
 
         elif ObjectIsCommand(plist, GetSessionCertificate):
             getSessionCertificate = GetSessionCertificate(plist)
@@ -286,7 +308,7 @@ class SiriProtocolHandler(Siri):
 
         elif ObjectIsCommand(plist, CreateSessionInfoRequest):
             # how does a positive answer look like?
-            #createSessionInfoRequest = CreateSessionInfoRequest(plist)
+            createSessionInfoRequest = CreateSessionInfoRequest(plist)
             
             #success = CreateSessionInfoResponse(createSessionInfoRequest.aceId)
             #success.sessionInfo = biplist.Data("\x01\x02BLABLABLBALBALBALBALBALBALBALBA")
