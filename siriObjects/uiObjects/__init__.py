@@ -2,6 +2,8 @@ from siriObjects.baseObjects import ClientBoundCommand, AceObject, \
     ServerBoundCommand
 from siriObjects.systemObjects import AceView
 
+
+
 class UISnippetInteraction(ServerBoundCommand):
     classIdentifier = "SnippetInteraction"
     groupIdentifier = "com.apple.ace.assistant"
@@ -473,4 +475,89 @@ class Snippet(UISnippet):
     
     def to_plist(self):
         return super(Snippet, self).to_plist()
+    
+    
+    
+## IOS 6 stuff
+
+class UIAppPunchOut(ClientBoundCommand):
+    def __init__(self, refId):
+        super(UIAppPunchOut, self).__init__("AppPunchOut", "com.apple.ace.assistant", None, refId)
+        self.alternativePunchOut = None # @"SAUIAddViews"
+        self.appDisplayName = None # @"NSString"
+        self.appIcon = None # @"SAUIImageResource"
+        self.appIconMap = None # @"NSDictionary"
+        self.appInstalled = None # c
+        self.appStoreUri = None # @"NSURL"
+        self.bundleId = None # @"NSString"
+        self.providerId = None # @"NSString"
+        self.punchOutName = None # @"NSString"
+        self.punchOutUri = None # @"NSURL"
+
+
+    def to_plist(self):
+        self.add_property('alternativePunchOut')
+        self.add_property('appDisplayName')
+        self.add_property('appIcon')
+        self.add_property('appIconMap')
+        self.add_property('appInstalled')
+        self.add_property('appStoreUri')
+        self.add_property('bundleId')
+        self.add_property('providerId')
+        self.add_property('punchOutName')
+        self.add_property('punchOutUri')
+        return super(UIAppPunchOut, self).to_plist()
+
+
+class UIImageResource(AceObject):
+    def __init__(self):
+        super(UIImageResource, self).__init__("ImageResource", "com.apple.ace.assistant")
+        self.pointHeight = None # d
+        self.pointWidth = None # d
+        self.resourceUrl = None # @"NSURL"
+        self.scaleFactor = None # d
+
+    def to_plist(self):
+        self.add_property('pointHeight')
+        self.add_property('pointWidth')
+        self.add_property('resourceUrl')
+        self.add_property('scaleFactor')
+        return super(UIImageResource, self).to_plist()
+
+
+class UIRequestUpdateViews(ClientBoundCommand):
+    def __init__(self, refId):
+        super(UIRequestUpdateViews, self).__init__("RequestUpdateViews", "com.apple.ace.assistant", None, refId)
+        self.commands = None # @"NSArray"
+        self.timeInSeconds = None # @"NSNumber"
+        self.viewIds = None # @"NSArray"
+
+
+    def to_plist(self):
+        self.add_property('commands')
+        self.add_property('timeInSeconds')
+        self.add_property('viewIds')
+        return super(UIRequestUpdateViews, self).to_plist()
+
+
+class UISirilandSnippet(UISnippet):
+    def __init__(self):
+        super(UISirilandSnippet, self).__init__("SirilandSnippet", "com.apple.ace.assistant")
+        self.navigationPath = None # @"NSString"
+
+    def to_plist(self):
+        self.add_property('navigationPath')
+        return super(UISirilandSnippet, self).to_plist()
+
+
+
+class UIUpdateViews(ClientBoundCommand):
+    def __init__(self, refId):
+        super(UIUpdateViews, self).__init__("UpdateViews", "com.apple.ace.assistant", None, refId)
+        self.views = None # @"NSArray"
+
+
+    def to_plist(self):
+        self.add_property('views')
+        return super(UIUpdateViews, self).to_plist()
 
