@@ -13,6 +13,7 @@ import struct
 import threading
 import zlib
 import pprint
+import re
 
 class Ping(object):
     def __init__(self, num):
@@ -23,11 +24,13 @@ class ServerObject(object):
         self.plist = plist
 
 class Siri(LineReceiver):
+    userAgentParser = re.compile("Assistant\(.*/(?P<phoneVersion>.+); .* OS/(?P<clientOSVersion>.*)/(?P<clientOSbuildNumber>.*)\) Ace/(?P<protocolVersion>.*)")
 
     def __init__(self, server, peer):
         self.server = server
         self.peer = peer
         self.header = ""
+        self.headerPerField = dict()
         self.rawData = ""
         self.output_buffer = ""
         self.unzipped_output_buffer = ""
@@ -37,6 +40,10 @@ class Siri(LineReceiver):
         self.compressor = zlib.compressobj()
         self.logger = logging.getLogger()
         self.sendLock = threading.Lock()
+        self.phoneVersion = "Unknown"
+        self.protocolVersion = 0
+        self.clientOSVersion = 0
+        self.clientOSbuildNumber = "Unknown"
 
     def connectionMade(self):
         self.logger.info("New connection from {0} on port {1}".format(self.peer.host, self.peer.port))
@@ -105,6 +112,16 @@ class Siri(LineReceiver):
             self.transport.loseConnection()
         else:
             self.consumed_ace = False
+            headerlines = self.header.strip().splitlines()[1:]
+            self.headerPerField = dict([headerlines[i].split(": ") for i in range(0, len(headerlines))])
+            if "User-Agent" in self.headerPerField.keys():
+                match = Siri.userAgentParser.match(self.headerPerField["User-Agent"])
+                if match != None:
+                    self.phoneVersion = match.group('phoneVersion')
+                    self.clientOSVersion = float(match.group('clientOSVersion'))
+                    self.clientOSbuildNumber = match.group('clientOSbuildNumber')
+                    self.protocolVersion = float(match.group('protocolVersion'))
+            self.logger.info("New client with {0} on OS version {1} build {2} connected using protocol version {3}".format(self.phoneVersion, self.clientOSVersion, self.clientOSbuildNumber, self.protocolVersion))
             self.setRawMode()
         
     def rawDataReceived(self, data):
