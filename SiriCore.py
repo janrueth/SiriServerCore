@@ -41,8 +41,8 @@ class Siri(LineReceiver):
         self.logger = logging.getLogger()
         self.sendLock = threading.Lock()
         self.phoneVersion = "Unknown"
-        self.protocolVersion = 0
-        self.clientOSVersion = 0
+        self.protocolVersion = 0.0
+        self.clientOSVersion = 0.0
         self.clientOSbuildNumber = "Unknown"
 
     def connectionMade(self):
