@@ -118,9 +118,9 @@ class Siri(LineReceiver):
                 match = Siri.userAgentParser.match(self.headerPerField["User-Agent"])
                 if match != None:
                     self.phoneVersion = match.group('phoneVersion')
-                    self.clientOSVersion = float(match.group('clientOSVersion'))
+                    self.clientOSVersion = match.group('clientOSVersion')
                     self.clientOSbuildNumber = match.group('clientOSbuildNumber')
-                    self.protocolVersion = float(match.group('protocolVersion'))
+                    self.protocolVersion = match.group('protocolVersion')
             self.logger.info("New client with {0} on OS version {1} build {2} connected using protocol version {3}".format(self.phoneVersion, self.clientOSVersion, self.clientOSbuildNumber, self.protocolVersion))
             self.setRawMode()
         
