@@ -24,7 +24,8 @@ class ServerObject(object):
         self.plist = plist
 
 class Siri(LineReceiver):
-    userAgentParser = re.compile("Assistant\(.*/(?P<phoneVersion>.+); .* OS/(?P<clientOSVersion>.*)/(?P<clientOSbuildNumber>.*)\) Ace/(?P<protocolVersion>.*)")
+    #Assistant(MacBook Pro/MacBookPro9,2; Mac OS X/10.8.2/12C60) Ace/1.2
+    userAgentParser = re.compile("Assistant\((?P<deviceType>.*)/(?P<deviceVersion>.+); (?P<clientOSType>.*)/(?P<clientOSVersion>.*)/(?P<clientOSbuildNumber>.*)\) Ace/(?P<protocolVersion>.*)")
 
     def __init__(self, server, peer):
         self.server = server
@@ -40,8 +41,10 @@ class Siri(LineReceiver):
         self.compressor = zlib.compressobj()
         self.logger = logging.getLogger()
         self.sendLock = threading.Lock()
-        self.phoneVersion = "Unknown"
+        self.deviceType = "Unknown"
+        self.deviceVersion = "Unknown"
         self.protocolVersion = "Unknown"
+        self.clientOSType = "Unknown"
         self.clientOSVersion = "Unknown"
         self.clientOSbuildNumber = "Unknown"
 
@@ -117,11 +120,13 @@ class Siri(LineReceiver):
             if "User-Agent" in self.headerPerField.keys():
                 match = Siri.userAgentParser.match(self.headerPerField["User-Agent"])
                 if match != None:
-                    self.phoneVersion = match.group('phoneVersion')
+                    self.deviceType = match.group('deviceType')
+                    self.deviceVersion = match.group('deviceVersion')
+                    self.clientOSType = match.group('clientOSType')
                     self.clientOSVersion = match.group('clientOSVersion')
                     self.clientOSbuildNumber = match.group('clientOSbuildNumber')
                     self.protocolVersion = match.group('protocolVersion')
-            self.logger.info("New client with {0} on OS version {1} build {2} connected using protocol version {3}".format(self.phoneVersion, self.clientOSVersion, self.clientOSbuildNumber, self.protocolVersion))
+            self.logger.info("New {0} ({1}) on {2} version {3} build {4} connected using protocol version {5}".format(self.deviceType, self.deviceVersion, self.clientOSType, self.clientOSVersion, self.clientOSbuildNumber, self.protocolVersion))
             self.setRawMode()
         
     def rawDataReceived(self, data):
