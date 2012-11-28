@@ -11,6 +11,21 @@ Or if you just want to give me a little credit for my work. But don't worry the 
 
 NEWS
 ----
+**OS X 10.8 Update**
+
+The new dictate function of OS X Mountain Lion uses the same backing engine as Siri on iOS, therefore this server is able to work with OS X 10.8.
+If you want to use it, you can configure your Mac to use SiriServer.
+I added a minor fix to display a connected Mac correctly.
+
+If you want to configure your Mac to use SiriServer, you can edit the:
+
+    ~/Library/Preferences/com.apple.assistant.plist
+
+It follows the same syntax as on iOS. Or you can download a Preference Pane for the System Preferences I wrote which allows you to set some important values.
+You can get it at: http://download.siri-server.com/SiriPrefsForOSX.prefPane.zip
+Just unzip it an install the SiriPrefsForOSX.prefPane by double clicking it.
+You should activate Speech & Dictation before using it, I haven't tested every scenario thoroughly.
+
 
 **iOS 6 Update**
 
